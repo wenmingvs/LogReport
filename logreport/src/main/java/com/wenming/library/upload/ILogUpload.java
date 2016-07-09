@@ -32,4 +32,12 @@ public interface ILogUpload {
      * @param file
      */
     public void sendFile(File file);
+
+    /**
+     * 退出APP。
+     *
+     * @param thread
+     * @param ex
+     */
+    public void closeApp(Thread thread, Throwable ex);
 }

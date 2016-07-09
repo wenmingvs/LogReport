@@ -1,8 +1,13 @@
 package com.wenming.library;
 
 import android.content.Context;
+import android.os.Environment;
+import android.text.TextUtils;
 
-import com.wenming.library.log.CrashHandler;
+import com.wenming.library.crash.CrashHandler;
+import com.wenming.library.crash.LogWriter;
+import com.wenming.library.encryption.IEncryption;
+import com.wenming.library.save.ISave;
 import com.wenming.library.upload.LogUpload;
 
 /**
@@ -11,8 +16,29 @@ import com.wenming.library.upload.LogUpload;
 public class LogReport {
 
     private static LogReport logReport = new LogReport();
+    /**
+     * 设置上传的方式
+     */
     private LogUpload mUpload;
+    /**
+     * 设置缓存文件夹的大小,默认是30MB
+     */
+    private long mCacheSize = 30 * 1024 * 1024;
 
+    /**
+     * 设置日志保存的路径
+     */
+    public static String LOGDIR;
+
+    /**
+     * 设置加密方式
+     */
+    private IEncryption mEncryption;
+
+    /**
+     * 设置日志的保存方式
+     */
+    private ISave mLogSaver;
 
     private LogReport() {
     }
@@ -21,18 +47,50 @@ public class LogReport {
         return logReport;
     }
 
-    /**
-     * 设置日志的上传的方式。
-     *
-     * @param logUpload
-     */
+    public LogReport setCacheSize(long cacheSize) {
+        this.mCacheSize = mCacheSize;
+        return this;
+    }
+
+    public void setEncryption(IEncryption encryption) {
+        this.mEncryption = encryption;
+    }
+
     public LogReport setUploadType(LogUpload logUpload) {
         mUpload = logUpload;
         return this;
     }
 
+    public LogReport setLogDir(Context context, String logDir) {
+        if (TextUtils.isEmpty(logDir)) {
+            //如果SD不可用，则存储在沙盒中
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                LOGDIR = context.getExternalCacheDir().getAbsolutePath();
+            } else {
+                LOGDIR = context.getCacheDir().getAbsolutePath();
+            }
+        } else {
+            LOGDIR = logDir;
+        }
+        return this;
+    }
+
+    public LogReport setLogSaver(ISave logSaver) {
+        this.mLogSaver = logSaver;
+        return this;
+    }
+
     public void init(Context context) {
-        CrashHandler.getInstance().init(context, mUpload);
+        if (TextUtils.isEmpty(LOGDIR)) {
+            //如果SD不可用，则存储在沙盒中
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                LOGDIR = context.getExternalCacheDir().getAbsolutePath();
+            } else {
+                LOGDIR = context.getCacheDir().getAbsolutePath();
+            }
+        }
+        LogWriter.getInstance().setLogSaver(mLogSaver);
+        CrashHandler.getInstance().init(context, mLogSaver);
     }
 
 

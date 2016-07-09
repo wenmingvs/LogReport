@@ -30,18 +30,14 @@ import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 抽象的日志报告类
  */
 public abstract class LogUpload implements ILogUpload {
-    /**
-     * 。系统默认异常处理
-     */
     private static final Thread.UncaughtExceptionHandler sDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-
     private Context mContext;
-
     private ExecutorService mSingleExecutor = Executors.newSingleThreadExecutor();
     protected Future mFuture;
     private int TIMEOUT = 5;
@@ -90,7 +86,6 @@ public abstract class LogUpload implements ILogUpload {
      */
     public String buildBody(Context context) {
         StringBuilder sb = new StringBuilder();
-
         sb.append("APPLICATION INFORMATION").append('\n');
         PackageManager pm = context.getPackageManager();
         ApplicationInfo ai = context.getApplicationInfo();
@@ -103,7 +98,6 @@ public abstract class LogUpload implements ILogUpload {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
         sb.append('\n').append("DEVICE INFORMATION").append('\n');
         sb.append("Board: ").append(Build.BOARD).append('\n');
         sb.append("BOOTLOADER: ").append(Build.BOOTLOADER).append('\n');
@@ -121,7 +115,16 @@ public abstract class LogUpload implements ILogUpload {
         sb.append("TAGS: ").append(Build.TAGS).append('\n');
         sb.append("TYPE: ").append(Build.TYPE).append('\n');
         sb.append("USER: ").append(Build.USER).append('\n');
-
         return sb.toString();
+    }
+
+    @Override
+    public void closeApp(Thread thread, Throwable ex) {
+        try {
+            mFuture.get(TIMEOUT, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        sDefaultHandler.uncaughtException(thread, ex);
     }
 }

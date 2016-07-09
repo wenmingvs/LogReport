@@ -3,6 +3,7 @@ package com.wenming.crashcachedemo;
 import android.app.Application;
 
 import com.wenming.library.LogReport;
+import com.wenming.library.save.LogSaver;
 import com.wenming.library.upload.email.EmailReporter;
 
 /**
@@ -26,6 +27,11 @@ public class MyApplication extends Application {
         reporter.setSendPassword("gwy9439007836");
         reporter.setSMTPHost("smtp.163.com");
         reporter.setPort("465");
-        LogReport.getInstance().setUploadType(reporter).init(getApplicationContext());
+        LogReport.getInstance()
+                .setCacheSize(30 * 1024 * 1024)
+                .setLogDir(getApplicationContext(), "sdcard/aaa")
+                .setUploadType(reporter)
+                .setLogSaver(new LogSaver(getApplicationContext()))
+                .init(getApplicationContext());
     }
 }

@@ -1,42 +1,30 @@
-package com.wenming.library.log;
+package com.wenming.library.crash;
 
 import android.content.Context;
 
-import com.wenming.library.save.CrashAllInOne;
 import com.wenming.library.save.ISave;
-import com.wenming.library.upload.LogUpload;
 
-import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by wenmingvs on 2016/7/4.
  */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
     public static final String TAG = "CrashHandler";
-
-    private static final String saveDic = "/sdcard/crash/";
-    private static final String saveType = ".txt";
-
-    //系统默认的UncaughtException处理类
-    private Thread.UncaughtExceptionHandler mDefaultHandler;
-    //CrashHandler实例
+    private static final String mCrashType = ".txt";
     private static CrashHandler INSTANCE = new CrashHandler();
-    //程序的Context对象
     private Context mContext;
-    //用来存储设备信息和异常信息
-    private Map<String, String> infos = new HashMap<String, String>();
-
-    //用于格式化日期,作为日志文件名的一部分
+    private Thread.UncaughtExceptionHandler mDefaultHandler;
     private DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
-    private LogUpload mLogUpload;
+    /**
+     * 设置日志的保存方式
+     */
+    private ISave mSave;
 
     /**
      * 保证只有一个CrashHandler实例
@@ -53,40 +41,38 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     /**
      * 初始化,，设置此CrashHandler来响应崩溃事件
-     *
-     * @param context
+     *  @param context
+     * @param logSaver
      */
-    public void init(Context context, LogUpload logUpload) {
+    public void init(Context context, ISave logSaver) {
         mContext = context;
-        mLogUpload = logUpload;
+        mSave = logSaver;
+
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
+
 
     /**
      * 当UncaughtException发生时会转入该函数来处理
      */
     @Override
-    public void uncaughtException(Thread thread, Throwable ex) {
-        if (!handleException(ex) && mDefaultHandler != null) {
-            //如果用户没有处理则让系统默认的异常处理器来处理
-            mDefaultHandler.uncaughtException(thread, ex);
+    public void uncaughtException(final Thread thread, final Throwable ex) {
+        boolean success = handleException(ex);
+        if (success) {
+            return;
         } else {
-            android.os.Process.killProcess(android.os.Process.myPid());
-            System.exit(1);
+            mDefaultHandler.uncaughtException(thread, ex);
         }
     }
 
     /**
-     * 自定义错误处理,收集错误信息 发送错误报告等操作均在此完成.
+     * 收集错误信息
      *
      * @param ex
      * @return true:如果处理了该异常信息;否则返回false.
      */
     private boolean handleException(final Throwable ex) {
-        if (ex == null) {
-            return false;
-        }
         Writer writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);
         ex.printStackTrace(printWriter);
@@ -99,9 +85,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("↓↓↓↓exception↓↓↓↓\n");
         stringBuilder.append(writer.toString());
-        ISave save = new CrashAllInOne(mContext);
-        File exceptionFile = save.writeLogToFile(CrashAllInOne.LOG_FILE_NAME_EXCEPTION, TAG, stringBuilder.toString());
-        mLogUpload.sendFile(exceptionFile);
+        mSave.writeCrash(TAG, stringBuilder.toString());
         return true;
     }
 }

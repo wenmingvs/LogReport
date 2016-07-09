@@ -8,15 +8,20 @@ import java.io.File;
  * 此类区别于MultipCrash，每发生崩溃，就写入到一个文件中，方便提交到GitHub中
  * Created by wenmingvs on 2016/7/8.
  */
-public class SingleCrash implements ISave {
-    @Override
-    public void writePhoneInfo(File file, Context context) {
+public class LogSaver2 extends BaseSave {
 
+
+    public LogSaver2(Context context) {
+        super(context);
     }
 
     @Override
-    public File writeLogToFile(String logFileName, String tag, String tips) {
+    public File writeLog(String tag, String content) {
+        return null;
+    }
 
+    @Override
+    public File writeCrash(String tag, String content) {
         return null;
     }
 }

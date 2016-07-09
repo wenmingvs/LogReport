@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.wenming.library.log.LogSaver;
+import com.wenming.library.crash.LogWriter;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogSaver.writeDebugLog(MainActivity.this, " LogSaver.writeDebugLog测试");
+                LogWriter.writeLog("wenming", "郭文明真帅！！！！");
             }
         });
     }
