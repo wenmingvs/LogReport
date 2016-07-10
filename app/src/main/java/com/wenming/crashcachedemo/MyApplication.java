@@ -3,7 +3,7 @@ package com.wenming.crashcachedemo;
 import android.app.Application;
 
 import com.wenming.library.LogReport;
-import com.wenming.library.save.LogSaver;
+import com.wenming.library.save.LogSaver2;
 import com.wenming.library.upload.email.EmailReporter;
 
 /**
@@ -31,7 +31,8 @@ public class MyApplication extends Application {
                 .setCacheSize(30 * 1024 * 1024)
                 .setLogDir(getApplicationContext(), "sdcard/aaa")
                 .setUploadType(reporter)
-                .setLogSaver(new LogSaver(getApplicationContext()))
+                //.setEncryption(new AESEncode())
+                .setLogSaver(new LogSaver2(getApplicationContext()))
                 .init(getApplicationContext());
     }
 }

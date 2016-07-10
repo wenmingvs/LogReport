@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.wenming.library.LogReport;
+import com.wenming.library.encryption.IEncryption;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
+ * 提供通用的保存操作log的日志和设备信息的方法
  * Created by wenmingvs on 2016/7/9.
  */
 public abstract class BaseSave implements ISave {
@@ -50,13 +52,17 @@ public abstract class BaseSave implements ISave {
 
     public static String LOG_DIR;
 
-
     /**
      * 操作日志全名拼接
      */
     public final static String LOG_FILE_NAME_MONITOR = "MonitorLog" + LOG_CREATE_TIME + SAVE_FILE_TYPE;
 
     public Context mContext;
+
+    /**
+     * 加密方式
+     */
+    public static IEncryption mEncryption;
 
     public BaseSave(Context context) {
         this.mContext = context;
@@ -68,7 +74,6 @@ public abstract class BaseSave implements ISave {
      * @param file
      */
     public File createFile(File file, Context context) {
-
         StringBuilder sb = new StringBuilder();
         sb.append("Application Information").append('\n');
         PackageManager pm = context.getPackageManager();
@@ -89,6 +94,9 @@ public abstract class BaseSave implements ISave {
         sb.append("HARDWARE: ").append(Build.HARDWARE).append('\n');
 
         //TODO 支持添加更多信息
+
+
+        sb = new StringBuilder(encodeString(sb.toString()));
         try {
             file.createNewFile();
             FileOutputStream fos = new FileOutputStream(file);
@@ -107,13 +115,17 @@ public abstract class BaseSave implements ISave {
     public static String formatLogMsg(String tag, String tips) {
         final String timeStr = LOG_FOLDER_TIME_FORMAT.format(Calendar.getInstance().getTime());
         final Thread currThread = Thread.currentThread();
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("Trd: ").append(currThread.getId()).append(" ").append(currThread.getName()).append(" ").append(timeStr).append(" Class: ").append(tag).append(" > ").append(tips);
+        sb = new StringBuilder(encodeString(sb.toString()));
         return sb.toString();
     }
 
     @Override
     public File writeLog(String tag, String content) {
+
+        content = encodeString(content);
+
         LOG_DIR = LogReport.LOGDIR + "/Log/" + CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
         RandomAccessFile randomAccessFile = null;
         File logFile = null;
@@ -144,6 +156,24 @@ public abstract class BaseSave implements ISave {
             }
         }
         return logFile;
+    }
+
+    @Override
+    public void setEncodeType(IEncryption encodeType) {
+        mEncryption = encodeType;
+    }
+
+    public static String encodeString(String content) {
+        if (mEncryption != null) {
+            try {
+                return mEncryption.encrypt(content);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return content;
+            }
+        } else {
+            return content;
+        }
     }
 
 

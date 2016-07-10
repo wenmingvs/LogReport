@@ -52,8 +52,9 @@ public class LogReport {
         return this;
     }
 
-    public void setEncryption(IEncryption encryption) {
+    public LogReport setEncryption(IEncryption encryption) {
         this.mEncryption = encryption;
+        return this;
     }
 
     public LogReport setUploadType(LogUpload logUpload) {
@@ -89,8 +90,12 @@ public class LogReport {
                 LOGDIR = context.getCacheDir().getAbsolutePath();
             }
         }
-        LogWriter.getInstance().setLogSaver(mLogSaver);
+        if(mEncryption != null){
+            mLogSaver.setEncodeType(mEncryption);
+        }
         CrashHandler.getInstance().init(context, mLogSaver);
+        LogWriter.getInstance().setLogSaver(mLogSaver);
+
     }
 
 
