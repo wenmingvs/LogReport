@@ -127,4 +127,6 @@ public abstract class LogUpload implements ILogUpload {
         }
         sDefaultHandler.uncaughtException(thread, ex);
     }
+
+
 }

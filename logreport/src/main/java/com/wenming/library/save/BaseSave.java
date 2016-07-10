@@ -94,9 +94,8 @@ public abstract class BaseSave implements ISave {
         sb.append("HARDWARE: ").append(Build.HARDWARE).append('\n');
 
         //TODO 支持添加更多信息
-
-
         sb = new StringBuilder(encodeString(sb.toString()));
+
         try {
             file.createNewFile();
             FileOutputStream fos = new FileOutputStream(file);
@@ -123,10 +122,8 @@ public abstract class BaseSave implements ISave {
 
     @Override
     public File writeLog(String tag, String content) {
-
         content = encodeString(content);
-
-        LOG_DIR = LogReport.LOGDIR + "/Log/" + CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
+        LOG_DIR = LogReport.LOGDIR+"/Log/"+ CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
         RandomAccessFile randomAccessFile = null;
         File logFile = null;
         try {

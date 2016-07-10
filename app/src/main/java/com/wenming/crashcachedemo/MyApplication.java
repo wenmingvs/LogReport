@@ -29,7 +29,7 @@ public class MyApplication extends Application {
         reporter.setPort("465");
         LogReport.getInstance()
                 .setCacheSize(30 * 1024 * 1024)
-                .setLogDir(getApplicationContext(), "sdcard/aaa")
+                //.setLogDir(getApplicationContext(), Environment.getExternalStorageDirectory().getPath() + "/aaa")
                 .setUploadType(reporter)
                 //.setEncryption(new AESEncode())
                 .setLogSaver(new LogSaver2(getApplicationContext()))

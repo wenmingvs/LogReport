@@ -47,7 +47,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     public void init(Context context, ISave logSaver) {
         mContext = context;
         mSave = logSaver;
-
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
     }

@@ -20,7 +20,7 @@ public class LogReport {
     /**
      * 设置上传的方式
      */
-    private LogUpload mUpload;
+    public LogUpload mUpload;
     /**
      * 设置缓存文件夹的大小,默认是30MB
      */
@@ -100,6 +100,7 @@ public class LogReport {
 
     /**
      * 调用此方法，上传日志信息
+     *
      * @param applicationContext
      */
     public void upload(Context applicationContext) {
