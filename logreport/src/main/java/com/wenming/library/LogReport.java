@@ -1,6 +1,7 @@
 package com.wenming.library;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
 import android.text.TextUtils;
 
@@ -52,8 +53,9 @@ public class LogReport {
         return this;
     }
 
-    public void setEncryption(IEncryption encryption) {
+    public LogReport setEncryption(IEncryption encryption) {
         this.mEncryption = encryption;
+        return this;
     }
 
     public LogReport setUploadType(LogUpload logUpload) {
@@ -89,8 +91,20 @@ public class LogReport {
                 LOGDIR = context.getCacheDir().getAbsolutePath();
             }
         }
-        LogWriter.getInstance().setLogSaver(mLogSaver);
+        if (mEncryption != null) {
+            mLogSaver.setEncodeType(mEncryption);
+        }
         CrashHandler.getInstance().init(context, mLogSaver);
+        LogWriter.getInstance().setLogSaver(mLogSaver);
+    }
+
+    /**
+     * 调用此方法，上传日志信息
+     * @param applicationContext
+     */
+    public void upload(Context applicationContext) {
+        Intent intent = new Intent(applicationContext, LogService.class);
+        applicationContext.startService(intent);
     }
 
 

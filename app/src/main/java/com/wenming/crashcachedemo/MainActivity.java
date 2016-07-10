@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import com.wenming.library.LogReport;
 import com.wenming.library.crash.LogWriter;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,6 +17,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        LogReport.getInstance().upload(this);
+
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
         button1.setOnClickListener(new View.OnClickListener() {
