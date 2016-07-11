@@ -28,7 +28,7 @@ public class LogSaver extends BaseSave {
     }
 
     @Override
-    public File writeCrash(String tag, String content) {
+    public synchronized File writeCrash(String tag, String content) {
         LOG_DIR = LogReport.LOGDIR +"/Log/"+ CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
         RandomAccessFile randomAccessFile = null;
         File logFile = null;

@@ -11,9 +11,12 @@ import android.util.Log;
 import com.wenming.library.LogReport;
 import com.wenming.library.encryption.IEncryption;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -94,8 +97,11 @@ public abstract class BaseSave implements ISave {
         sb.append("HARDWARE: ").append(Build.HARDWARE).append('\n');
 
         //TODO 支持添加更多信息
-        sb = new StringBuilder(encodeString(sb.toString()));
 
+
+        //加密信息
+        sb = new StringBuilder(encodeString(sb.toString()));
+        Log.d("wenming", "createFile = " + sb.toString());
         try {
             file.createNewFile();
             FileOutputStream fos = new FileOutputStream(file);
@@ -122,24 +128,30 @@ public abstract class BaseSave implements ISave {
 
     @Override
     public File writeLog(String tag, String content) {
-        content = encodeString(content);
         LOG_DIR = LogReport.LOGDIR+"/Log/"+ CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
+        File logsDir = new File(LOG_DIR);
         RandomAccessFile randomAccessFile = null;
-        File logFile = null;
+        File logFile = new File(logsDir, LOG_FILE_NAME_MONITOR);
         try {
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                File logsDir = new File(LOG_DIR);
                 if (!logsDir.exists()) {
                     logsDir.mkdirs();
                 }
-                logFile = new File(logsDir, LOG_FILE_NAME_MONITOR);
                 if (!logFile.exists()) {
                     createFile(logFile, mContext);
                 }
-                randomAccessFile = new RandomAccessFile(logFile, "rw");
-                randomAccessFile.seek(logFile.length());
-                randomAccessFile.write(("\r\n" + formatLogMsg(tag, content)).getBytes());
 
+                //读取文件中的文本内容，并且解密
+                StringBuilder preContent = new StringBuilder(mEncryption.decrypt(getPreEncodeContent(logFile)));
+                Log.d("wenming", "读取本地的Log文件，并且解密 = " + preContent);
+                //添加log内容
+                preContent.append("\r\n" + formatLogMsg(tag, content));
+                //加密后保存回去
+                randomAccessFile = new RandomAccessFile(logFile, "rw");
+                //清空本地内容
+                randomAccessFile.setLength(0);
+                //重新保存回去
+                randomAccessFile.write(mEncryption.decrypt(preContent.toString()).getBytes());
             }
         } catch (Exception e) {
             Log.e(TAG, e.toString());
@@ -171,6 +183,23 @@ public abstract class BaseSave implements ISave {
         } else {
             return content;
         }
+    }
+
+    public String getPreEncodeContent(File file) {
+        InputStreamReader reader = null; // 建立一个输入流对象reader
+        BufferedReader br = new BufferedReader(reader); // 建立一个对象，它把文件内容转成计算机能读懂的语言
+        String line = "";
+        try {
+            reader = new InputStreamReader(new FileInputStream(file));
+            line = br.readLine();
+            while (line != null) {
+                line = br.readLine(); // 一次读入一行数据
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.d("wenming", line);
+        return line;
     }
 
 

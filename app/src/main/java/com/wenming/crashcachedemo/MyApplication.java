@@ -1,9 +1,11 @@
 package com.wenming.crashcachedemo;
 
 import android.app.Application;
+import android.os.Environment;
 
 import com.wenming.library.LogReport;
-import com.wenming.library.save.LogSaver2;
+import com.wenming.library.encryption.imp.AESEncode;
+import com.wenming.library.save.LogSaver;
 import com.wenming.library.upload.email.EmailReporter;
 
 /**
@@ -29,10 +31,10 @@ public class MyApplication extends Application {
         reporter.setPort("465");
         LogReport.getInstance()
                 .setCacheSize(30 * 1024 * 1024)
-                //.setLogDir(getApplicationContext(), Environment.getExternalStorageDirectory().getPath() + "/aaa")
+                .setLogDir(getApplicationContext(), Environment.getExternalStorageDirectory().getPath() + "/aaa")
                 .setUploadType(reporter)
-                //.setEncryption(new AESEncode())
-                .setLogSaver(new LogSaver2(getApplicationContext()))
+                .setEncryption(new AESEncode())
+                .setLogSaver(new LogSaver(getApplicationContext()))
                 .init(getApplicationContext());
     }
 }

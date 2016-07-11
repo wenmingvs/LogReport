@@ -24,9 +24,9 @@ public class DESEncode implements IEncryption {
     private static byte[] iv = {1, 2, 3, 4, 5, 6, 7, 8};
 
     /**
-     * 默认使用的key
+     * 默认使用的key,DES的密钥一定要是8位数，否则加密会失败
      */
-    private final static String DEFAULT_KEY = "asdasjhkuoi";
+    private final static String DEFAULT_KEY = "wenmingv";
 
 
     /**
@@ -70,13 +70,11 @@ public class DESEncode implements IEncryption {
 
     /****
      * @param key 解密的密钥
-     * @param src 解密的内容
      * @return
      * @throws Exception
      */
-    public String decrypt(String key, String src) throws Exception {
-
-        byte[] byteMi = Base64.decode(src, Base64.DEFAULT);
+    public String decrypt(String key, String encodeString) throws Exception {
+        byte[] byteMi = Base64.decode(encodeString, Base64.DEFAULT);
         // 实例化IvParameterSpec对象，使用指定的初始化向量
         IvParameterSpec zeroIv = new IvParameterSpec(iv);
         // 实例化SecretKeySpec类，根据字节数组来构造SecretKey

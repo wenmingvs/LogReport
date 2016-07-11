@@ -19,7 +19,7 @@ public class AESEncode implements IEncryption {
     /**
      * 默认使用的key
      */
-    private final static String DEFAULT_KEY = "asdasjhkuoi";
+    private final static String DEFAULT_KEY = "wenmingvs";
 
     /**
      * 使用默认的密钥进行加密
@@ -39,7 +39,7 @@ public class AESEncode implements IEncryption {
      * @throws Exception
      */
     public String decrypt(String encrypted) throws Exception {
-        return encrypt(DEFAULT_KEY, encrypted);
+        return decrypt(DEFAULT_KEY, encrypted);
     }
 
 
