@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="EclipseCodeFormatter">
+    <option name="defaultSettings" value="true" />
+    <option name="eclipseVersion" value="ECLIPSE_44" />
+    <option name="formatter" value="ECLIPSE" />
+    <option name="id" value="1455433314727" />
+    <option name="name" value="default" />
+    <option name="pathToConfigFileJava" value="$USER_HOME$/Documents/Tencent Files/529208204/FileRecv/Meitu_CodeFormattet_1.1.7.xml" />
+    <option name="selectedJavaProfile" value="Meitu_CodeFormatter" />
+    <option name="useOldEclipseJavaFormatter" value="true" />
+  </component>
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>

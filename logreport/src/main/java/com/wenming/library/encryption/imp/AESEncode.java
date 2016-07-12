@@ -20,7 +20,6 @@ public class AESEncode implements IEncryption {
      * 默认使用的key
      */
     private final static String DEFAULT_KEY = "wenmingvs";
-
     /**
      * 使用默认的密钥进行加密
      *
@@ -90,7 +89,7 @@ public class AESEncode implements IEncryption {
         }
         sr.setSeed(password);
         // 256 bits or 128 bits,192bits
-        kgen.init(256, sr);
+        kgen.init(128, sr);// 最好使用128位加密，其他两种会有莫名其妙的问题
         SecretKey skey = kgen.generateKey();
         byte[] raw = skey.getEncoded();
         return raw;
