@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,9 +25,9 @@ import java.util.Locale;
  * 提供通用的保存操作log的日志和设备信息的方法
  * Created by wenmingvs on 2016/7/9.
  */
-public abstract class BaseSave implements ISave {
+public abstract class LogWriter implements ISave {
 
-    private final static String TAG = "BaseSave";
+    private final static String TAG = "LogWriter";
 
 
     /**
@@ -66,7 +65,7 @@ public abstract class BaseSave implements ISave {
      */
     public static IEncryption mEncryption;
 
-    public BaseSave(Context context) {
+    public LogWriter(Context context) {
         this.mContext = context;
     }
 
@@ -97,10 +96,10 @@ public abstract class BaseSave implements ISave {
 
         // TODO 支持添加更多信息
 
-        Log.d("wenming", "创建的设备信息（加密前） = " + sb.toString());
+        Log.d("wenming", "创建的设备信息（加密前） = \n" + sb.toString());
         //加密信息
         sb = new StringBuilder(encodeString(sb.toString()));
-        Log.d("wenming", "创建的设备信息（加密后） = " + sb.toString());
+        Log.d("wenming", "创建的设备信息（加密后） = \n" + sb.toString());
         try {
             if (!file.exists()) {
                 file.createNewFile();
@@ -115,51 +114,35 @@ public abstract class BaseSave implements ISave {
     }
 
     @Override
-    public File writeLog(String tag, String content) {
-        LOG_DIR =
-            LogReport.LOGDIR + File.separator + "Log" + File.separator
-                + CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis())) + File.separator;
-        File logsDir = new File(LOG_DIR);
-        RandomAccessFile randomAccessFile = null;
-        File logFile = new File(logsDir, LOG_FILE_NAME_MONITOR);
-        try {
-            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                if (!logsDir.exists()) {
-                    Log.d("wenming", "logsDir.mkdirs() =  +　" + logsDir.mkdirs());
-                }
-                if (!logFile.exists()) {
-                    createFile(logFile, mContext);
-                }
-                //读取文件中的文本内容，并且解密
-                StringBuilder preContent = new StringBuilder(decodeString(getText(logFile)));
-                Log.d("wenming", "读取本地的Log文件，并且解密 = \n" + preContent.toString());
-                //添加log内容
-                preContent.append(formatLogMsg(tag, content) + "\n");
-
-                Log.d("wenming", "即将保存的Log文件内容 = \n" + preContent.toString());
-                saveText(logFile, preContent.toString());
-
-                // saveText(logFile,preContent.toString());
-                // //加密后保存回去
-                // randomAccessFile = new RandomAccessFile(logFile, "rw");
-                // //清空本地内容
-                // randomAccessFile.setLength(0);
-                // //重新保存回去
-                // randomAccessFile.write(mEncryption.decrypt(preContent.toString()).getBytes());
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-            e.printStackTrace();
-        } finally {
-            if (randomAccessFile != null) {
+    public void writeLog(final String tag, final String content) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LOG_DIR =
+                    LogReport.LOGDIR + "/Log/" + CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis())) + "/";
+                File logsDir = new File(LOG_DIR);
+                File logFile = new File(logsDir, LOG_FILE_NAME_MONITOR);
                 try {
-                    randomAccessFile.close();
-                } catch (IOException e) {
+                    if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                        if (!logsDir.exists()) {
+                            Log.d("wenming", "logsDir.mkdirs() =  +　" + logsDir.mkdirs());
+                        }
+                        if (!logFile.exists()) {
+                            createFile(logFile, mContext);
+                        }
+                        StringBuilder preContent = new StringBuilder(decodeString(getText(logFile)));
+                        Log.d("wenming", "读取本地的Log文件，并且解密 = \n" + preContent.toString());
+                        preContent.append(formatLogMsg(tag, content) + "\n");
+                        Log.d("wenming", "即将保存的Log文件内容 = \n" + preContent.toString());
+                        saveText(logFile, preContent.toString());
+                    }
+                } catch (Exception e) {
                     Log.e(TAG, e.toString());
+                    e.printStackTrace();
                 }
             }
-        }
-        return logFile;
+        }).start();
+
     }
 
     @Override
@@ -302,7 +285,7 @@ public abstract class BaseSave implements ISave {
             .append(tag)
             .append(" > ")
             .append(tips);
-        Log.d("wenming", "添加的内容是:" + sb.toString());
+        Log.d("wenming", "添加的内容是:\n" + sb.toString());
         return sb.toString();
     }
 

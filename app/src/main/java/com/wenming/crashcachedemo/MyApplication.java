@@ -5,7 +5,7 @@ import android.os.Environment;
 
 import com.wenming.library.LogReport;
 import com.wenming.library.encryption.imp.AESEncode;
-import com.wenming.library.save.LogSaver;
+import com.wenming.library.save.CrashWriter;
 import com.wenming.library.upload.email.EmailReporter;
 
 /**
@@ -31,10 +31,10 @@ public class MyApplication extends Application {
         reporter.setPort("465");
         LogReport.getInstance()
                 .setCacheSize(30 * 1024 * 1024)
-                .setLogDir(getApplicationContext(), Environment.getExternalStorageDirectory().getPath() + "/aaa")
+            .setLogDir(getApplicationContext(), Environment.getExternalStorageDirectory().getPath() + "/aaa/")
                 .setUploadType(reporter)
                 .setEncryption(new AESEncode())
-                .setLogSaver(new LogSaver(getApplicationContext()))
+            .setLogSaver(new CrashWriter(getApplicationContext()))
                 .init(getApplicationContext());
     }
 }

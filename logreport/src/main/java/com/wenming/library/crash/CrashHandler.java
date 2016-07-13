@@ -59,6 +59,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     public void uncaughtException(final Thread thread, final Throwable ex) {
         boolean success = handleException(ex);
         if (success) {
+
             return;
         } else {
             mDefaultHandler.uncaughtException(thread, ex);

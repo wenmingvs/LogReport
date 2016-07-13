@@ -15,11 +15,11 @@ import java.util.Date;
  * 此类区别于MultipCrash，每发生崩溃，就写入到一个文件中，方便提交到GitHub中
  * Created by wenmingvs on 2016/7/8.
  */
-public class LogSaver2 extends BaseSave {
+public class CrashWriter2 extends LogWriter {
 
-    private final static String TAG = "LogSaver2";
+    private final static String TAG = "CrashWriter2";
 
-    public LogSaver2(Context context) {
+    public CrashWriter2(Context context) {
         super(context);
     }
 
@@ -30,7 +30,7 @@ public class LogSaver2 extends BaseSave {
 
 
     @Override
-    public synchronized File writeCrash(String tag, String content) {
+    public synchronized void writeCrash(String tag, String content) {
         LOG_DIR = LogReport.LOGDIR + "/Log/" + CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
         RandomAccessFile randomAccessFile = null;
         File logsDir = new File(LOG_DIR);
@@ -44,18 +44,12 @@ public class LogSaver2 extends BaseSave {
                 if (!logFile.exists()) {
                     createFile(logFile, mContext);
                 }
-                // 读取文件中的文本内容，并且解密
                 StringBuilder preContent = new StringBuilder(mEncryption.decrypt(getText(logFile)));
                 Log.d("wenming", "读取本地的Crash文件，并且解密 = \n" + preContent);
-                // 添加log内容
                 preContent.append("\r\n" + formatLogMsg(tag, content));
-
                 Log.d("wenming", "即将保存的Crash文件内容 = \n" + preContent);
                 saveText(logFile, preContent.toString());
 
-                // randomAccessFile = new RandomAccessFile(logFile, "rw");
-                // randomAccessFile.seek(logFile.length());
-                // randomAccessFile.write(("\r\n" + formatLogMsg(tag, content)).getBytes());
             }
         } catch (Exception e) {
             Log.e(TAG, e.toString());
@@ -69,7 +63,6 @@ public class LogSaver2 extends BaseSave {
                 }
             }
         }
-        return logFile;
     }
 
 }

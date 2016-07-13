@@ -25,5 +25,12 @@
         android:layout_centerInParent="true"
         android:text="打印log并且保存到本地" />
 
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="清空本地缓存"  />
+
 
 </LinearLayout>
