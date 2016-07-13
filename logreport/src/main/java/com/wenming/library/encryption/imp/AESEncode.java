@@ -1,5 +1,8 @@
 package com.wenming.library.encryption.imp;
 
+import android.util.Base64;
+
+import com.wenming.library.encryption.AesCbcWithIntegrity;
 import com.wenming.library.encryption.IEncryption;
 
 import java.security.SecureRandom;
@@ -20,6 +23,10 @@ public class AESEncode implements IEncryption {
      * 默认使用的key
      */
     private final static String DEFAULT_KEY = "wenmingvs";
+
+    private static String EXAMPLE_PASSWORD = "LeighHunt";
+    private static String SALT = "wenmingvs";
+
     /**
      * 使用默认的密钥进行加密
      *
@@ -28,7 +35,18 @@ public class AESEncode implements IEncryption {
      * @throws Exception
      */
     public String encrypt(String src) throws Exception {
-        return encrypt(DEFAULT_KEY, src);
+        // String SALT = AesCbcWithIntegrity.saltString(AesCbcWithIntegrity.generateSalt());
+        AesCbcWithIntegrity.SecretKeys key =
+            AesCbcWithIntegrity.generateKeyFromPassword(EXAMPLE_PASSWORD,
+                Base64.encodeToString(SALT.getBytes(), Base64.NO_WRAP));
+        String keyStr = AesCbcWithIntegrity.keyString(key);
+        key = null;
+        key = AesCbcWithIntegrity.keys(keyStr);
+        AesCbcWithIntegrity.CipherTextIvMac civ = AesCbcWithIntegrity.encrypt(src, key);
+
+        return civ.toString();
+
+        // return encrypt(DEFAULT_KEY, src);
     }
 
 
@@ -38,7 +56,18 @@ public class AESEncode implements IEncryption {
      * @throws Exception
      */
     public String decrypt(String encrypted) throws Exception {
-        return decrypt(DEFAULT_KEY, encrypted);
+        AesCbcWithIntegrity.CipherTextIvMac cipherTextIvMac = new AesCbcWithIntegrity.CipherTextIvMac(encrypted);
+        AesCbcWithIntegrity.SecretKeys key =
+            AesCbcWithIntegrity.generateKeyFromPassword(EXAMPLE_PASSWORD,
+                Base64.encodeToString(SALT.getBytes(), Base64.NO_WRAP));
+        String keyStr = AesCbcWithIntegrity.keyString(key);
+        key = null;
+        key = AesCbcWithIntegrity.keys(keyStr);
+        String decryptedText = AesCbcWithIntegrity.decryptString(cipherTextIvMac, key);
+
+        return decryptedText;
+
+        // return decrypt(DEFAULT_KEY, encrypted);
     }
 
 
