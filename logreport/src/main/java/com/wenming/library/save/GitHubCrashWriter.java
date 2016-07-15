@@ -12,14 +12,14 @@ import java.io.RandomAccessFile;
 import java.util.Date;
 
 /**
- * 此类区别于MultipCrash，每发生崩溃，就写入到一个文件中，方便提交到GitHub中
+ * 逐个保存崩溃信息
  * Created by wenmingvs on 2016/7/8.
  */
-public class CrashWriter2 extends LogWriter {
+public class GitHubCrashWriter extends BaseSaver {
 
-    private final static String TAG = "CrashWriter2";
+    private final static String TAG = "GitHubCrashWriter";
 
-    public CrashWriter2(Context context) {
+    public GitHubCrashWriter(Context context) {
         super(context);
     }
 
@@ -28,9 +28,8 @@ public class CrashWriter2 extends LogWriter {
      */
     public final static String LOG_FILE_NAME_EXCEPTION = "CrashLog" + LOG_FOLDER_TIME_FORMAT.format(new Date(System.currentTimeMillis())) + SAVE_FILE_TYPE;
 
-
     @Override
-    public synchronized void writeCrash(String tag, String content) {
+    public synchronized void writeCrash(Thread thread, Throwable ex, String tag, String content) {
         LOG_DIR = LogReport.LOGDIR + "/Log/" + CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
         RandomAccessFile randomAccessFile = null;
         File logsDir = new File(LOG_DIR);
@@ -63,6 +62,11 @@ public class CrashWriter2 extends LogWriter {
                 }
             }
         }
+    }
+
+    @Override
+    public void closeApp(Thread thread, Throwable ex) {
+
     }
 
 }

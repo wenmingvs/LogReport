@@ -20,7 +20,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //LogReport.getInstance().upload(this);
+//        String content = "test";
+//        AESEncode AESEncode = new AESEncode();
+//        try {
+//            String encode = AESEncode.encrypt(content);
+//            Log.d("wenmingvs", "encode = " + encode);
+//            Log.d("wenmingvs", "decode = " + AESEncode.decrypt(encode));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
+        LogReport.getInstance().upload(this);
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
         button3 = (Button) findViewById(R.id.button3);
@@ -43,8 +54,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 File file = new File(LogReport.LOGDIR);
-                file.delete();
+                deleteDir(file);
             }
         });
+
+    }
+
+    /**
+     * 递归删除目录下的所有文件及子目录下所有文件
+     *
+     * @param dir 将要删除的文件目录
+     * @return boolean Returns "true" if all deletions were successful.
+     * If a deletion fails, the method stops attempting to
+     * delete and returns "false".
+     */
+    private static boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            // 递归删除目录中的子目录下
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        // 目录此时为空，可以删除
+        return dir.delete();
     }
 }

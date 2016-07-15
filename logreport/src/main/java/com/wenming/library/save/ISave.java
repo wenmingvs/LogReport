@@ -9,7 +9,10 @@ public interface ISave {
 
     public void writeLog(String tag, String content);
 
-    public void writeCrash(String tag, String content);
+    public void writeCrash(Thread thread, Throwable ex, String tag, String content);
 
     public void setEncodeType(IEncryption encodeType);
+
+    public void closeApp(Thread thread, Throwable ex);
+
 }

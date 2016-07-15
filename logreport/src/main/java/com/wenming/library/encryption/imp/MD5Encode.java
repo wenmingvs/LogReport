@@ -24,7 +24,6 @@ public class MD5Encode {
             // 使用指定的byte数组对摘要进行最的更新，然后完成摘要计算
             return toHexString(algorithm.digest(), "");
         } catch (NoSuchAlgorithmException e) {
-            // TODO 自动生成的 catch 块
             e.printStackTrace();
         }
         return "";

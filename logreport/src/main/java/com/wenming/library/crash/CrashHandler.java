@@ -2,6 +2,7 @@ package com.wenming.library.crash;
 
 import android.content.Context;
 
+import com.wenming.library.save.CrashWriter3;
 import com.wenming.library.save.ISave;
 
 import java.io.PrintWriter;
@@ -41,7 +42,8 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     /**
      * 初始化,，设置此CrashHandler来响应崩溃事件
-     *  @param context
+     *
+     * @param context
      * @param logSaver
      */
     public void init(Context context, ISave logSaver) {
@@ -57,22 +59,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(final Thread thread, final Throwable ex) {
-        boolean success = handleException(ex);
-        if (success) {
-
-            return;
-        } else {
-            mDefaultHandler.uncaughtException(thread, ex);
-        }
-    }
-
-    /**
-     * 收集错误信息
-     *
-     * @param ex
-     * @return true:如果处理了该异常信息;否则返回false.
-     */
-    private boolean handleException(final Throwable ex) {
         Writer writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);
         ex.printStackTrace(printWriter);
@@ -85,7 +71,32 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("↓↓↓↓exception↓↓↓↓\n");
         stringBuilder.append(writer.toString());
-        mSave.writeCrash(TAG, stringBuilder.toString());
-        return true;
+        mSave.writeCrash(thread, ex, TAG, stringBuilder.toString());
+
+        if (mSave instanceof CrashWriter3) {
+            try {
+                thread.sleep(6000);// 如果处理了，让程序继续运行3秒再退出，保证文件保存并上传到服务器
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Looper.prepare();
+//                try {
+//                    mSave.closeApp(thread, ex);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                Looper.loop();
+//            }
+//        }).start();
+
+
     }
 }
+
+

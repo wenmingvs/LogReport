@@ -25,10 +25,9 @@ import java.util.Locale;
  * 提供通用的保存操作log的日志和设备信息的方法
  * Created by wenmingvs on 2016/7/9.
  */
-public abstract class LogWriter implements ISave {
+public abstract class BaseSaver implements ISave {
 
-    private final static String TAG = "LogWriter";
-
+    private final static String TAG = "BaseSaver";
 
     /**
      * 根据日期创建文件夹,文件夹的名称以日期命名,下面是日期的格式
@@ -65,8 +64,46 @@ public abstract class LogWriter implements ISave {
      */
     public static IEncryption mEncryption;
 
-    public LogWriter(Context context) {
+    public BaseSaver(Context context) {
         this.mContext = context;
+    }
+
+    @Override
+    public synchronized void writeLog(final String tag, final String content) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LOG_DIR =
+                        LogReport.LOGDIR + "/Log/" + CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis())) + "/";
+                File logsDir = new File(LOG_DIR);
+                File logFile = new File(logsDir, LOG_FILE_NAME_MONITOR);
+                synchronized (logFile) {
+                    try {
+                        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                            if (!logsDir.exists()) {
+                                Log.d("wenming", "logsDir.mkdirs() =  +　" + logsDir.mkdirs());
+                            }
+                            if (!logFile.exists()) {
+                                createFile(logFile, mContext);
+                            }
+                            long startTime = System.nanoTime();
+                            StringBuilder preContent = new StringBuilder(decodeString(getText(logFile)));
+                            long endTime = System.nanoTime();
+
+                            Log.d("wenming", "解密耗时为 = ： " + String.valueOf((double) (endTime - startTime) / 1000000) + "ms");
+                            Log.d("wenming", "读取本地的Log文件，并且解密 = \n" + preContent.toString());
+                            preContent.append(formatLogMsg(tag, content) + "\n");
+                            Log.d("wenming", "即将保存的Log文件内容 = \n" + preContent.toString());
+                            saveText(logFile, preContent.toString());
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, e.toString());
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+
     }
 
     /**
@@ -113,37 +150,7 @@ public abstract class LogWriter implements ISave {
         return file;
     }
 
-    @Override
-    public void writeLog(final String tag, final String content) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                LOG_DIR =
-                    LogReport.LOGDIR + "/Log/" + CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis())) + "/";
-                File logsDir = new File(LOG_DIR);
-                File logFile = new File(logsDir, LOG_FILE_NAME_MONITOR);
-                try {
-                    if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                        if (!logsDir.exists()) {
-                            Log.d("wenming", "logsDir.mkdirs() =  +　" + logsDir.mkdirs());
-                        }
-                        if (!logFile.exists()) {
-                            createFile(logFile, mContext);
-                        }
-                        StringBuilder preContent = new StringBuilder(decodeString(getText(logFile)));
-                        Log.d("wenming", "读取本地的Log文件，并且解密 = \n" + preContent.toString());
-                        preContent.append(formatLogMsg(tag, content) + "\n");
-                        Log.d("wenming", "即将保存的Log文件内容 = \n" + preContent.toString());
-                        saveText(logFile, preContent.toString());
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
-                    e.printStackTrace();
-                }
-            }
-        }).start();
 
-    }
 
     @Override
     public void setEncodeType(IEncryption encodeType) {
@@ -205,46 +212,13 @@ public abstract class LogWriter implements ISave {
         return text.toString();
     }
 
-    // byte Buffer[] = new byte[1024];
-    // // 得到文件输入流
-    // FileInputStream in = null;
-    // ByteArrayOutputStream outputStream = null;
-    // try {
-    // in = new FileInputStream(file);
-    // // 读出来的数据首先放入缓冲区，满了之后再写到字符输出流中
-    // int len = in.read(Buffer);
-    // // 创建一个字节数组输出流
-    // outputStream = new ByteArrayOutputStream();
-    // outputStream.write(Buffer, 0, len);
-    // // 把字节输出流转String
-    // Log.d("wenming", "读取log文件的加密内容：\n" + new String(outputStream.toByteArray()));
-    // return new String(outputStream.toByteArray());
-    // } catch (Exception e) {
-    // Log.e(TAG, e.toString());
-    // e.printStackTrace();
-    // } finally {
-    // if (in != null) {
-    // try {
-    // in.close();
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    // }
-    // if (outputStream != null) {
-    // try {
-    // outputStream.flush();
-    // outputStream.close();
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    // }
-    // }
-    // return null;
-
     public boolean saveText(File logFile, String content) {
         FileOutputStream outputStream = null;
         try {
+            long startTime = System.nanoTime();
             content = encodeString(content);
+            long endTime = System.nanoTime();
+            Log.d("wenming", "加密耗时为 = ： " + String.valueOf((double) (endTime - startTime) / 1000000) + "ms");
             Log.d("wenming", "最终写到文本的加密Log：\n" + content);
             outputStream = new FileOutputStream(logFile);
             outputStream.write(content.getBytes("UTF-8"));
@@ -288,5 +262,4 @@ public abstract class LogWriter implements ISave {
         Log.d("wenming", "添加的内容是:\n" + sb.toString());
         return sb.toString();
     }
-
 }
