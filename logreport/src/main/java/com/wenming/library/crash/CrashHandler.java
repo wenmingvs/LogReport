@@ -75,27 +75,11 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
         if (mSave instanceof CrashWriter3) {
             try {
-                thread.sleep(6000);// 如果处理了，让程序继续运行3秒再退出，保证文件保存并上传到服务器
+                thread.sleep(5000);// 如果处理了，让程序继续运行5秒再退出，保证文件保存并上传到服务器
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
-
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Looper.prepare();
-//                try {
-//                    mSave.closeApp(thread, ex);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                Looper.loop();
-//            }
-//        }).start();
-
-
     }
 }
 

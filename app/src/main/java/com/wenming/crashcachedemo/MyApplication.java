@@ -4,7 +4,6 @@ import android.app.Application;
 import android.os.Environment;
 
 import com.wenming.library.LogReport;
-import com.wenming.library.encryption.imp.AESEncode;
 import com.wenming.library.save.CrashWriter3;
 import com.wenming.library.upload.email.EmailReporter;
 
@@ -33,7 +32,7 @@ public class MyApplication extends Application {
                 .setCacheSize(30 * 1024 * 1024)
                 .setLogDir(getApplicationContext(), Environment.getExternalStorageDirectory().getPath() + "/aaa/")
                 .setUploadType(reporter)
-                .setEncryption(new AESEncode())
+                //.setEncryption(new AESEncode())
                 .setLogSaver(new CrashWriter3(getApplicationContext()))
                 .init(getApplicationContext());
     }

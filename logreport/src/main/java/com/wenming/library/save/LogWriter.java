@@ -1,8 +1,6 @@
-package com.wenming.library.crash;
+package com.wenming.library.save;
 
 import android.util.Log;
-
-import com.wenming.library.save.ISave;
 
 /**
  * Created by wenmingvs on 2016/7/9.
@@ -18,7 +16,7 @@ public class LogWriter {
         return logWriter;
     }
 
-    public LogWriter setLogSaver(ISave save) {
+    public LogWriter init(ISave save) {
         this.mSave = save;
         return this;
     }

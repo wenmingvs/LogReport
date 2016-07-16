@@ -20,6 +20,8 @@
  */
 package com.wenming.library.upload;
 
+import android.app.Service;
+
 import java.io.File;
 
 /**
@@ -31,7 +33,7 @@ public interface ILogUpload {
      *
      * @param file
      */
-    public void sendFile(File file);
+    public void sendFile(File file, Service service, String content);
 
     /**
      * 退出APP。

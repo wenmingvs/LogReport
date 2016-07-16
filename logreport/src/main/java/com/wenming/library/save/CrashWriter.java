@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.wenming.library.LogReport;
+import com.wenming.library.util.FileUtil;
 
 import java.io.File;
 import java.util.Date;
@@ -51,7 +52,7 @@ public class CrashWriter extends BaseSaver {
             @Override
             public void run() {
                 LOG_DIR =
-                        LogReport.LOGDIR + "Log/" + CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis())) + "/";
+                        LogReport.LOGDIR + "Log/" + yyyy_mm_dd.format(new Date(System.currentTimeMillis())) + "/";
                 File logsDir = new File(LOG_DIR);
                 File logFile = new File(logsDir, LOG_FILE_NAME_EXCEPTION);
                 synchronized (logFile) {
@@ -63,7 +64,7 @@ public class CrashWriter extends BaseSaver {
                             if (!logFile.exists()) {
                                 createFile(logFile, mContext);
                             }
-                            StringBuilder preContent = new StringBuilder(decodeString(getText(logFile)));
+                            StringBuilder preContent = new StringBuilder(decodeString(FileUtil.getText(logFile)));
                             Log.d("wenming", "读取本地的Crash文件，并且解密 = \n" + preContent.toString());
                             preContent.append(formatLogMsg(tag, content) + "\n");
                             Log.d("wenming", "即将保存的Crash文件内容 = \n" + preContent.toString());

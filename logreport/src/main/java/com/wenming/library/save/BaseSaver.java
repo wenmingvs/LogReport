@@ -10,11 +10,10 @@ import android.util.Log;
 
 import com.wenming.library.LogReport;
 import com.wenming.library.encryption.IEncryption;
+import com.wenming.library.util.FileUtil;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,12 +31,12 @@ public abstract class BaseSaver implements ISave {
     /**
      * 根据日期创建文件夹,文件夹的名称以日期命名,下面是日期的格式
      */
-    public final static SimpleDateFormat CREATE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    public final static SimpleDateFormat yyyy_mm_dd = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     /**
      * 在每一条log前面增加一个时间戳
      */
-    public final static SimpleDateFormat LOG_FOLDER_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SS", Locale.getDefault());
+    public final static SimpleDateFormat yyyy_MM_dd_HH_mm_ss_SS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SS", Locale.getDefault());
 
 
     /**
@@ -48,7 +47,7 @@ public abstract class BaseSaver implements ISave {
     /**
      * 日志命名的其中一部分：时间戳
      */
-    public final static String LOG_CREATE_TIME = CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
+    public final static String LOG_CREATE_TIME = yyyy_mm_dd.format(new Date(System.currentTimeMillis()));
 
     public static String LOG_DIR;
 
@@ -68,42 +67,25 @@ public abstract class BaseSaver implements ISave {
         this.mContext = context;
     }
 
-    @Override
-    public synchronized void writeLog(final String tag, final String content) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                LOG_DIR =
-                        LogReport.LOGDIR + "/Log/" + CREATE_DATE_FORMAT.format(new Date(System.currentTimeMillis())) + "/";
-                File logsDir = new File(LOG_DIR);
-                File logFile = new File(logsDir, LOG_FILE_NAME_MONITOR);
-                synchronized (logFile) {
-                    try {
-                        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                            if (!logsDir.exists()) {
-                                Log.d("wenming", "logsDir.mkdirs() =  +　" + logsDir.mkdirs());
-                            }
-                            if (!logFile.exists()) {
-                                createFile(logFile, mContext);
-                            }
-                            long startTime = System.nanoTime();
-                            StringBuilder preContent = new StringBuilder(decodeString(getText(logFile)));
-                            long endTime = System.nanoTime();
-
-                            Log.d("wenming", "解密耗时为 = ： " + String.valueOf((double) (endTime - startTime) / 1000000) + "ms");
-                            Log.d("wenming", "读取本地的Log文件，并且解密 = \n" + preContent.toString());
-                            preContent.append(formatLogMsg(tag, content) + "\n");
-                            Log.d("wenming", "即将保存的Log文件内容 = \n" + preContent.toString());
-                            saveText(logFile, preContent.toString());
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, e.toString());
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-
+    /**
+     * 用于在每条log前面，增加更多的文本信息，包括时间，线程名字等等
+     */
+    public static String formatLogMsg(String tag, String tips) {
+        String timeStr = yyyy_MM_dd_HH_mm_ss_SS.format(Calendar.getInstance().getTime());
+        Thread currThread = Thread.currentThread();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Trd: ")
+                .append(currThread.getId())
+                .append(" ")
+                .append(currThread.getName())
+                .append(" ")
+                .append(timeStr)
+                .append(" Class: ")
+                .append(tag)
+                .append(" > ")
+                .append(tips);
+        Log.d("wenming", "添加的内容是:\n" + sb.toString());
+        return sb.toString();
     }
 
     /**
@@ -185,32 +167,7 @@ public abstract class BaseSaver implements ISave {
         return content;
     }
 
-    public String getText(File file) {
-        StringBuilder text = new StringBuilder();
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = br.readLine()) != null) {
-                text.append(line);
-                text.append('\n');
-            }
 
-        } catch (IOException e) {
-            Log.e(TAG, e.toString());
-            e.printStackTrace();
-            // You'll need to add proper error handling here
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return text.toString();
-    }
 
     public boolean saveText(File logFile, String content) {
         FileOutputStream outputStream = null;
@@ -242,24 +199,41 @@ public abstract class BaseSaver implements ISave {
         return true;
     }
 
-    /**
-     * 用于在每条log前面，增加更多的文本信息，包括时间，线程名字等等
-     */
-    public static String formatLogMsg(String tag, String tips) {
-        String timeStr = LOG_FOLDER_TIME_FORMAT.format(Calendar.getInstance().getTime());
-        Thread currThread = Thread.currentThread();
-        StringBuilder sb = new StringBuilder();
-        sb.append("Trd: ")
-            .append(currThread.getId())
-            .append(" ")
-            .append(currThread.getName())
-            .append(" ")
-            .append(timeStr)
-            .append(" Class: ")
-            .append(tag)
-            .append(" > ")
-            .append(tips);
-        Log.d("wenming", "添加的内容是:\n" + sb.toString());
-        return sb.toString();
+    @Override
+    public synchronized void writeLog(final String tag, final String content) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LOG_DIR =
+                        LogReport.LOGDIR + "/Log/" + yyyy_mm_dd.format(new Date(System.currentTimeMillis())) + "/";
+                File logsDir = new File(LOG_DIR);
+                File logFile = new File(logsDir, LOG_FILE_NAME_MONITOR);
+                synchronized (logFile) {
+                    try {
+                        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                            if (!logsDir.exists()) {
+                                Log.d("wenming", "logsDir.mkdirs() =  +　" + logsDir.mkdirs());
+                            }
+                            if (!logFile.exists()) {
+                                createFile(logFile, mContext);
+                            }
+                            long startTime = System.nanoTime();
+                            StringBuilder preContent = new StringBuilder(decodeString(FileUtil.getText(logFile)));
+                            long endTime = System.nanoTime();
+
+                            Log.d("wenming", "解密耗时为 = ： " + String.valueOf((double) (endTime - startTime) / 1000000) + "ms");
+                            Log.d("wenming", "读取本地的Log文件，并且解密 = \n" + preContent.toString());
+                            preContent.append(formatLogMsg(tag, content) + "\n");
+                            Log.d("wenming", "即将保存的Log文件内容 = \n" + preContent.toString());
+                            saveText(logFile, preContent.toString());
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, e.toString());
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+
     }
 }

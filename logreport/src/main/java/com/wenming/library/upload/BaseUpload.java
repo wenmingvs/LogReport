@@ -20,6 +20,7 @@
  */
 package com.wenming.library.upload;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -35,14 +36,15 @@ import java.util.concurrent.TimeUnit;
 /**
  * 抽象的日志报告类
  */
-public abstract class LogUpload implements ILogUpload {
-    private static final Thread.UncaughtExceptionHandler sDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-    private Context mContext;
-    private ExecutorService mSingleExecutor = Executors.newSingleThreadExecutor();
-    protected Future mFuture;
-    private int TIMEOUT = 5;
+public abstract class BaseUpload implements ILogUpload {
+    public static final Thread.UncaughtExceptionHandler sDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+    public Context mContext;
+    public ExecutorService mSingleExecutor = Executors.newSingleThreadExecutor();
+    public Future mFuture;
+    public int TIMEOUT = 10;
 
-    public LogUpload(Context context) {
+
+    public BaseUpload(Context context) {
         mContext = context;
     }
 
@@ -56,30 +58,32 @@ public abstract class LogUpload implements ILogUpload {
     protected abstract void sendReport(String title, String body, File file);
 
     @Override
-    public void sendFile(final File file) {
+    public void sendFile(final File file, final Service service, String content) {
         if (mFuture != null && !mFuture.isDone()) {
             mFuture.cancel(false);
         }
-        mFuture = mSingleExecutor.submit(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 sendReport(buildTitle(mContext), buildBody(mContext), file);
+                service.stopSelf();
             }
-        });
+        }).start();
     }
 
     /**
-     * 构建标题
+     * 构建邮件的标题
      *
      * @param context
      * @return
      */
     public String buildTitle(Context context) {
         return "Crash Log: " + context.getPackageManager().getApplicationLabel(context.getApplicationInfo());
+
     }
 
     /**
-     * 构建正文
+     * 构建邮件的正文
      *
      * @param context
      * @return
@@ -90,7 +94,6 @@ public abstract class LogUpload implements ILogUpload {
         PackageManager pm = context.getPackageManager();
         ApplicationInfo ai = context.getApplicationInfo();
         sb.append("Application : ").append(pm.getApplicationLabel(ai)).append('\n');
-
         try {
             PackageInfo pi = pm.getPackageInfo(ai.packageName, 0);
             sb.append("Version Code: ").append(pi.versionCode).append('\n');

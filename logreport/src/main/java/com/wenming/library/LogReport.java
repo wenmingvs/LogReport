@@ -6,10 +6,12 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import com.wenming.library.crash.CrashHandler;
-import com.wenming.library.crash.LogWriter;
 import com.wenming.library.encryption.IEncryption;
 import com.wenming.library.save.ISave;
-import com.wenming.library.upload.LogUpload;
+import com.wenming.library.save.LogWriter;
+import com.wenming.library.upload.ILogUpload;
+import com.wenming.library.upload.UploadService;
+import com.wenming.library.util.NetUtil;
 
 /**
  * Created by wenmingvs on 2016/7/7.
@@ -20,7 +22,7 @@ public class LogReport {
     /**
      * 设置上传的方式
      */
-    public LogUpload mUpload;
+    public ILogUpload mUpload;
     /**
      * 设置缓存文件夹的大小,默认是30MB
      */
@@ -41,6 +43,7 @@ public class LogReport {
      */
     private ISave mLogSaver;
 
+
     private LogReport() {
     }
 
@@ -58,7 +61,7 @@ public class LogReport {
         return this;
     }
 
-    public LogReport setUploadType(LogUpload logUpload) {
+    public LogReport setUploadType(ILogUpload logUpload) {
         mUpload = logUpload;
         return this;
     }
@@ -95,7 +98,7 @@ public class LogReport {
             mLogSaver.setEncodeType(mEncryption);
         }
         CrashHandler.getInstance().init(context, mLogSaver);
-        LogWriter.getInstance().setLogSaver(mLogSaver);
+        LogWriter.getInstance().init(mLogSaver);
     }
 
     /**
@@ -104,9 +107,13 @@ public class LogReport {
      * @param applicationContext
      */
     public void upload(Context applicationContext) {
-        Intent intent = new Intent(applicationContext, LogService.class);
-        applicationContext.startService(intent);
+        if (mUpload != null && NetUtil.isWifi(applicationContext) && NetUtil.isConnected(applicationContext)) {
+            Intent intent = new Intent(applicationContext, UploadService.class);
+            applicationContext.startService(intent);
+        }
     }
 
-
+    public ILogUpload getUpload() {
+        return mUpload;
+    }
 }

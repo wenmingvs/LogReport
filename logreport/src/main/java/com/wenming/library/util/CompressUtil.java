@@ -1,4 +1,4 @@
-package com.wenming.library;
+package com.wenming.library.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
