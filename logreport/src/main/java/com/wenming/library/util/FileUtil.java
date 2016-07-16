@@ -81,11 +81,8 @@ public class FileUtil {
      */
     public static ArrayList<File> getCrashList(File logdir) {
         ArrayList<File> crashFileList = new ArrayList<>();
-
         findFiles(logdir.getAbsolutePath(), crashFileList);
-
-
-        Log.d("wenming", "matchingFiles length = " + crashFileList.size());
+        LogUtil.d("wenming", "matchingFiles length = " + crashFileList.size());
         return crashFileList;
     }
 
@@ -124,6 +121,23 @@ public class FileUtil {
                 }
             }
         }
+    }
+
+    /**
+     * 获取文件夹的大小
+     *
+     * @param directory
+     * @return
+     */
+    public static long folderSize(File directory) {
+        long length = 0;
+        for (File file : directory.listFiles()) {
+            if (file.isFile())
+                length += file.length();
+            else
+                length += folderSize(file);
+        }
+        return length;
     }
 
 

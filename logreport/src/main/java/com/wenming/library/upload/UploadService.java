@@ -4,11 +4,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.wenming.library.LogReport;
 import com.wenming.library.util.CompressUtil;
 import com.wenming.library.util.FileUtil;
+import com.wenming.library.util.LogUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,14 +45,14 @@ public class UploadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("wenming", "logdir = " + LogReport.getInstance().LOGDIR + "Log/");
-        File logdir = new File(LogReport.getInstance().LOGDIR + "Log/");//  sdcard/aaa/log
+        LogUtil.d("wenming", "logdir = " + LogReport.getInstance().LOGDIR + "Log/");
+        File logdir = new File(LogReport.getInstance().LOGDIR + "Log/");
         File zipdir = new File(AlreadyUploadLogDir);
         File zipfile = new File(zipdir, "UploadOn" + ZIP_FOLDER_TIME_FORMAT.format(System.currentTimeMillis()) + ".zip");
         StringBuilder content = new StringBuilder();
 
-        Log.d("wenming", "压缩路径 Logdir = " + logdir.getAbsolutePath());
-        Log.d("wenming", "保存zip的 Logdir = " + zipfile.getAbsolutePath());
+        LogUtil.d("wenming", "压缩路径 Logdir = " + logdir.getAbsolutePath());
+        LogUtil.d("wenming", "保存zip的 Logdir = " + zipfile.getAbsolutePath());
 
         if (logdir.exists() && logdir.listFiles().length > 0) {
             if (!zipdir.exists()) {
@@ -71,17 +71,17 @@ public class UploadService extends Service {
                         if (TextUtils.isEmpty(content)) {
                             content.append("No crash content");
                         }
-                        Log.d("wenming", "打包成功，删除本地Log日志 = " + FileUtil.deleteDir(logdir));
+                        LogUtil.d("wenming", "打包成功，删除本地Log日志 = " + FileUtil.deleteDir(logdir));
                         LogReport.getInstance().getUpload().sendFile(zipfile, this, content.toString());
                     }
 
                 } catch (IOException e) {
-                    Log.e("wenming", e.getMessage());
+                    LogUtil.e("wenming", e.getMessage());
                     e.printStackTrace();
                 }
             }
         } else {
-            Log.d("wenming", "本地没有崩溃日志，无需上传");
+            LogUtil.d("wenming", "本地没有崩溃日志，无需上传");
             stopSelf();
         }
 

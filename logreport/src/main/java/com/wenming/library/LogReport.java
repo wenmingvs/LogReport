@@ -43,6 +43,11 @@ public class LogReport {
      */
     private ISave mLogSaver;
 
+    /**
+     * 设置在哪种网络状态下上传，true为只在wifi模式下，false是wifi和移动网络
+     */
+    private boolean mWifiOnly = true;
+
 
     private LogReport() {
     }
@@ -63,6 +68,11 @@ public class LogReport {
 
     public LogReport setUploadType(ILogUpload logUpload) {
         mUpload = logUpload;
+        return this;
+    }
+
+    public LogReport setUploadNetWork(boolean wifiOnly) {
+        mWifiOnly = wifiOnly;
         return this;
     }
 
@@ -101,19 +111,26 @@ public class LogReport {
         LogWriter.getInstance().init(mLogSaver);
     }
 
+    public ILogUpload getUpload() {
+        return mUpload;
+    }
+
+
     /**
      * 调用此方法，上传日志信息
      *
      * @param applicationContext
      */
     public void upload(Context applicationContext) {
-        if (mUpload != null && NetUtil.isWifi(applicationContext) && NetUtil.isConnected(applicationContext)) {
-            Intent intent = new Intent(applicationContext, UploadService.class);
-            applicationContext.startService(intent);
+        if (mUpload == null) {
+            return;
         }
+        if (NetUtil.isConnected(applicationContext) && !NetUtil.isWifi(applicationContext) && mWifiOnly == true) {
+            return;
+        }
+        Intent intent = new Intent(applicationContext, UploadService.class);
+        applicationContext.startService(intent);
     }
 
-    public ILogUpload getUpload() {
-        return mUpload;
-    }
+
 }
