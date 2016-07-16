@@ -25,7 +25,6 @@ public class UploadService extends Service {
 
     public static final String logdir = LogReport.getInstance().LOGDIR;
 
-    public static final String AlreadyUploadLogDir = LogReport.getInstance().LOGDIR + "AlreadyUploadLog/";
 
     /**
      * 压缩包名称的一部分：时间戳
@@ -47,7 +46,7 @@ public class UploadService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         LogUtil.d("wenming", "logdir = " + LogReport.getInstance().LOGDIR + "Log/");
         File logdir = new File(LogReport.getInstance().LOGDIR + "Log/");
-        File zipdir = new File(AlreadyUploadLogDir);
+        File zipdir = new File(LogReport.getInstance().LOGDIR + "AlreadyUploadLog/");
         File zipfile = new File(zipdir, "UploadOn" + ZIP_FOLDER_TIME_FORMAT.format(System.currentTimeMillis()) + ".zip");
         StringBuilder content = new StringBuilder();
 
@@ -84,8 +83,25 @@ public class UploadService extends Service {
             LogUtil.d("wenming", "本地没有崩溃日志，无需上传");
             stopSelf();
         }
-
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    /**
+     * 检查文件夹是否超出缓存大小
+     *
+     * @param dir
+     * @return
+     */
+
+    //TODO 调用的司机，应该是发送完成后再删除
+    public boolean checkCacheSize(File dir) {
+        long dirSize = FileUtil.folderSize(dir);
+        if (dirSize > LogReport.getInstance().getCacheSize()) {
+            LogUtil.d("wenming", "超出大小，删除所以缓存文件");
+            return FileUtil.deleteDir(dir);
+        } else {
+            return false;
+        }
     }
 
 

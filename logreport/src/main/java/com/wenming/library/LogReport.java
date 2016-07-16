@@ -76,6 +76,7 @@ public class LogReport {
         return this;
     }
 
+
     public LogReport setLogDir(Context context, String logDir) {
         if (TextUtils.isEmpty(logDir)) {
             //如果SD不可用，则存储在沙盒中
@@ -115,6 +116,9 @@ public class LogReport {
         return mUpload;
     }
 
+    public long getCacheSize() {
+        return mCacheSize;
+    }
 
     /**
      * 调用此方法，上传日志信息

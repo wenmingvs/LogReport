@@ -32,6 +32,7 @@ public class MyApplication extends Application {
                 .setCacheSize(30 * 1024 * 1024)
                 .setLogDir(getApplicationContext(), Environment.getExternalStorageDirectory().getPath() + "/aaa/")
                 .setUploadType(reporter)
+                .setUploadNetWork(true)
                 //.setEncryption(new AESEncode())
                 .setLogSaver(new CrashWriter3(getApplicationContext()))
                 .init(getApplicationContext());
