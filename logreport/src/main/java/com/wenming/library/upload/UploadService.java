@@ -70,7 +70,7 @@ public class UploadService extends Service {
                         if (TextUtils.isEmpty(content)) {
                             content.append("No crash content");
                         }
-                        LogUtil.d("wenming", "打包成功，删除本地Log日志 = " + FileUtil.deleteDir(logdir));
+                        FileUtil.deleteDir(logdir);
                         LogReport.getInstance().getUpload().sendFile(zipfile, this, content.toString());
                     }
 
