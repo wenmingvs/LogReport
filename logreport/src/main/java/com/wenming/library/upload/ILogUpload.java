@@ -20,26 +20,26 @@
  */
 package com.wenming.library.upload;
 
-import android.app.Service;
-
 import java.io.File;
 
 /**
  * 崩溃监听。
  */
 public interface ILogUpload {
+
+    public interface OnUploadFinishedListener {
+        void onSuceess();
+
+
+        void onError(String error);
+    }
+
+
     /**
      * 发送日志文件。
      *
      * @param file
      */
-    public void sendFile(File file, Service service, String content);
+    public void sendFile(File file, String content, OnUploadFinishedListener onUploadFinishedListener);
 
-    /**
-     * 退出APP。
-     *
-     * @param thread
-     * @param ex
-     */
-    public void closeApp(Thread thread, Throwable ex);
 }

@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import com.wenming.library.crash.CrashHandler;
 import com.wenming.library.encryption.IEncryption;
 import com.wenming.library.save.ISave;
-import com.wenming.library.save.LogWriter;
+import com.wenming.library.save.imp.LogWriter;
 import com.wenming.library.upload.ILogUpload;
 import com.wenming.library.upload.UploadService;
 import com.wenming.library.util.NetUtil;
@@ -31,7 +31,7 @@ public class LogReport {
     /**
      * 设置日志保存的路径
      */
-    public static String LOGDIR;
+    public static String ROOT;
 
     /**
      * 设置加密方式
@@ -81,12 +81,12 @@ public class LogReport {
         if (TextUtils.isEmpty(logDir)) {
             //如果SD不可用，则存储在沙盒中
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                LOGDIR = context.getExternalCacheDir().getAbsolutePath();
+                ROOT = context.getExternalCacheDir().getAbsolutePath();
             } else {
-                LOGDIR = context.getCacheDir().getAbsolutePath();
+                ROOT = context.getCacheDir().getAbsolutePath();
             }
         } else {
-            LOGDIR = logDir;
+            ROOT = logDir;
         }
         return this;
     }
@@ -97,12 +97,12 @@ public class LogReport {
     }
 
     public void init(Context context) {
-        if (TextUtils.isEmpty(LOGDIR)) {
+        if (TextUtils.isEmpty(ROOT)) {
             //如果SD不可用，则存储在沙盒中
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                LOGDIR = context.getExternalCacheDir().getAbsolutePath();
+                ROOT = context.getExternalCacheDir().getAbsolutePath();
             } else {
-                LOGDIR = context.getCacheDir().getAbsolutePath();
+                ROOT = context.getCacheDir().getAbsolutePath();
             }
         }
         if (mEncryption != null) {
@@ -126,10 +126,12 @@ public class LogReport {
      * @param applicationContext
      */
     public void upload(Context applicationContext) {
+        //如果没有设置上传，则不执行
         if (mUpload == null) {
             return;
         }
-        if (NetUtil.isConnected(applicationContext) && !NetUtil.isWifi(applicationContext) && mWifiOnly == true) {
+        //如果网络可用，而且是移动网络，但是用户设置了只在wifi下上传，返回
+        if (NetUtil.isConnected(applicationContext) && !NetUtil.isWifi(applicationContext) && mWifiOnly) {
             return;
         }
         Intent intent = new Intent(applicationContext, UploadService.class);

@@ -23,7 +23,7 @@ package com.wenming.library.upload.http;
 import android.content.Context;
 import android.util.Log;
 
-import com.wenming.library.upload.BaseUpload2;
+import com.wenming.library.upload.BaseUpload;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * HTTP的post请求方式发送。
  */
-public class CrashHttpReporter extends BaseUpload2 {
+public class CrashHttpReporter extends BaseUpload {
     HttpClient httpclient = new DefaultHttpClient();
     private String url;
     private Map<String, String> otherParams;
@@ -55,7 +55,7 @@ public class CrashHttpReporter extends BaseUpload2 {
     }
 
     @Override
-    protected void sendReport(String title, String body, File file) {
+    protected void sendReport(String title, String body, File file, OnUploadFinishedListener onUploadFinishedListener) {
         SimpleMultipartEntity entity = new SimpleMultipartEntity();
         entity.addPart(titleParam, title);
         entity.addPart(bodyParam, body);
@@ -66,21 +66,22 @@ public class CrashHttpReporter extends BaseUpload2 {
             }
         }
         entity.addPart(fileParam, file, true);
-
         try {
             HttpPost req = new HttpPost(url);
             req.setEntity(entity);
             HttpResponse resp = httpclient.execute(req);
             int statusCode = resp.getStatusLine().getStatusCode();
             String responseString = EntityUtils.toString(resp.getEntity());
-            if (callback != null) {
-                if (callback.isSuccess(statusCode, responseString)) {
-                    deleteLog(file);
-                }
-            } else if (statusCode == 200) {
-                deleteLog(file);
-            }
+//            if (callback != null) {
+//                if (callback.isSuccess(statusCode, responseString)) {
+//                    //deleteLog(file);
+//                }
+//            } else if (statusCode == 200) {
+//                //deleteLog(file);
+//            }
+            onUploadFinishedListener.onSuceess();
         } catch (Exception e) {
+            onUploadFinishedListener.onError(e.getMessage().toString());
             e.printStackTrace();
         }
     }

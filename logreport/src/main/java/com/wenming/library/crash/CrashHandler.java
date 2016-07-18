@@ -2,7 +2,6 @@ package com.wenming.library.crash;
 
 import android.content.Context;
 
-import com.wenming.library.save.CrashWriter3;
 import com.wenming.library.save.ISave;
 
 import java.io.PrintWriter;
@@ -73,13 +72,13 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         stringBuilder.append(writer.toString());
         mSave.writeCrash(thread, ex, TAG, stringBuilder.toString());
 
-        if (mSave instanceof CrashWriter3) {
-            try {
-                thread.sleep(5000);// 如果处理了，让程序继续运行5秒再退出，保证文件保存并上传到服务器
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (mSave instanceof CrashWriter) {
+//            try {
+//                thread.sleep(3000);// 如果处理了，让程序继续运行5秒再退出，保证文件保存并上传到服务器
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 }
 

@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.wenming.library.LogReport;
-import com.wenming.library.save.LogWriter;
+import com.wenming.library.save.imp.LogWriter;
 import com.wenming.library.util.FileUtil;
 
 import java.io.File;
@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
 //            e.printStackTrace();
 //        }
 
-
         LogReport.getInstance().upload(this);
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File file = new File(LogReport.LOGDIR);
+                File file = new File(LogReport.ROOT);
                 FileUtil.deleteDir(file);
             }
         });

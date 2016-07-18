@@ -22,14 +22,14 @@ package com.wenming.library.upload.email;
 
 import android.content.Context;
 
-import com.wenming.library.upload.BaseUpload2;
+import com.wenming.library.upload.BaseUpload;
 
 import java.io.File;
 
 /**
  * 已经实现的日志报告类，这里通过邮件方式发送日志报告
  */
-public class EmailReporter extends BaseUpload2 {
+public class EmailReporter extends BaseUpload {
     private String mReceiveEmail;
     private String mSendEmail;
     private String mSendPassword;
@@ -86,7 +86,7 @@ public class EmailReporter extends BaseUpload2 {
     }
 
     @Override
-    protected void sendReport(String title, String body, File file) {
+    protected void sendReport(String title, String body, File file, OnUploadFinishedListener onUploadFinishedListener) {
         MailInfo sender = new MailInfo()
                 .setUser(mSendEmail)
                 .setPass(mSendPassword)
@@ -100,8 +100,9 @@ public class EmailReporter extends BaseUpload2 {
         try {
             sender.addAttachment(file.getPath(), file.getName());
             sender.send();
-            file.delete();
+            onUploadFinishedListener.onSuceess();
         } catch (Exception e) {
+            onUploadFinishedListener.onError(e.getMessage().toString());
             e.printStackTrace();
         }
     }

@@ -4,7 +4,7 @@ import android.app.Application;
 import android.os.Environment;
 
 import com.wenming.library.LogReport;
-import com.wenming.library.save.CrashWriter3;
+import com.wenming.library.save.imp.CrashWriter;
 import com.wenming.library.upload.email.EmailReporter;
 
 /**
@@ -34,7 +34,7 @@ public class MyApplication extends Application {
                 .setUploadType(reporter)
                 .setUploadNetWork(true)
                 //.setEncryption(new AESEncode())
-                .setLogSaver(new CrashWriter3(getApplicationContext()))
+                .setLogSaver(new CrashWriter(getApplicationContext()))
                 .init(getApplicationContext());
     }
 }

@@ -151,30 +151,20 @@ public class MailInfo extends Authenticator {
     public boolean send() throws MessagingException {
         if (!user.equals("") && !pass.equals("") && !to.equals("") && !from.equals("")) {
             Session session = Session.getDefaultInstance(props, this);
-            Log.d("SendUtil", host + "..." + port + ".." + user + "..." + pass);
-
             MimeMessage msg = new MimeMessage(session);
-
             msg.setFrom(new InternetAddress(from));
-
             InternetAddress addressTo = new InternetAddress(to);
             msg.setRecipient(MimeMessage.RecipientType.TO, addressTo);
-
             msg.setSubject(subject);
             msg.setSentDate(new Date());
-
             // setup message body
             BodyPart messageBodyPart = new MimeBodyPart();
             messageBodyPart.setText(body);
-
             multipart.addBodyPart(messageBodyPart, 0);
-
             // Put parts in message
             msg.setContent(multipart);
-
             // send email
             Transport.send(msg);
-
             return true;
         } else {
             return false;

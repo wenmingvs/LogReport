@@ -3,7 +3,6 @@ package com.wenming.library.upload;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.text.TextUtils;
 
 import com.wenming.library.LogReport;
 import com.wenming.library.util.CompressUtil;
@@ -11,7 +10,6 @@ import com.wenming.library.util.FileUtil;
 import com.wenming.library.util.LogUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -23,7 +21,7 @@ public class UploadService extends Service {
 
     public static final String TAG = "UploadService";
 
-    public static final String logdir = LogReport.getInstance().LOGDIR;
+    public static final String ROOT = LogReport.getInstance().ROOT;
 
 
     /**
@@ -44,47 +42,62 @@ public class UploadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogUtil.d("wenming", "logdir = " + LogReport.getInstance().LOGDIR + "Log/");
-        File logdir = new File(LogReport.getInstance().LOGDIR + "Log/");
-        File zipdir = new File(LogReport.getInstance().LOGDIR + "AlreadyUploadLog/");
-        File zipfile = new File(zipdir, "UploadOn" + ZIP_FOLDER_TIME_FORMAT.format(System.currentTimeMillis()) + ".zip");
+        final File logfolder = new File(LogReport.getInstance().ROOT + "Log/");
+        File zipfolder = new File(LogReport.getInstance().ROOT + "AlreadyUploadLog/");
+        File zipfile = new File(zipfolder, "UploadOn" + ZIP_FOLDER_TIME_FORMAT.format(System.currentTimeMillis()) + ".zip");
+        final File rootdir = new File(ROOT);
         StringBuilder content = new StringBuilder();
+        //crashFileList = FileUtil.getCrashList(logfolder);
 
-        LogUtil.d("wenming", "压缩路径 Logdir = " + logdir.getAbsolutePath());
-        LogUtil.d("wenming", "保存zip的 Logdir = " + zipfile.getAbsolutePath());
-
-        if (logdir.exists() && logdir.listFiles().length > 0) {
-            if (!zipdir.exists()) {
-                zipdir.mkdirs();
-            }
-            if (!zipfile.exists()) {
-                try {
-                    zipfile.createNewFile();
-                    if (CompressUtil.zipFileAtPath(logdir.getAbsolutePath(), zipfile.getAbsolutePath())) {
-
-                        ArrayList<File> crashFileList = FileUtil.getCrashList(logdir);
-                        for (File crash : crashFileList) {
-                            content.append(FileUtil.getText(crash));
-                            content.append("\n");
-                        }
-                        if (TextUtils.isEmpty(content)) {
-                            content.append("No crash content");
-                        }
-                        FileUtil.deleteDir(logdir);
-                        LogReport.getInstance().getUpload().sendFile(zipfile, this, content.toString());
-                    }
-
-                } catch (IOException e) {
-                    LogUtil.e("wenming", e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            LogUtil.d("wenming", "本地没有崩溃日志，无需上传");
-            stopSelf();
+        // 如果Log文件夹都不存在，说明不存在崩溃日志，检查缓存是否超出大小后退出
+        if (!logfolder.exists() || logfolder.listFiles().length == 0) {
+            LogUtil.d("Log文件夹都不存在，无需上传");
+            boolean checkresult = checkCacheSize(rootdir);
+            LogUtil.d("缓存大小检查，是否删除root下的所有文件 " + checkresult);
+            return Service.START_NOT_STICKY;
         }
-        return super.onStartCommand(intent, flags, startId);
+
+        ArrayList<File> crashFileList = FileUtil.getCrashList(logfolder);
+        //只存在log文件，但是不存在崩溃日志，也不会上传
+        if (crashFileList.size() == 0) {
+            LogUtil.d("只存在log文件，但是不存在崩溃日志，所以不上传");
+            return Service.START_NOT_STICKY;
+        }
+
+        //创建文件，如果父路径缺少，创建父路径
+        zipfile = FileUtil.createFile(zipfolder, zipfile);
+
+        //把日志文件压缩到压缩包中
+        if (CompressUtil.zipFileAtPath(logfolder.getAbsolutePath(), zipfile.getAbsolutePath())) {
+            LogUtil.d("把日志文件压缩到压缩包中 ----> 成功");
+            for (File crash : crashFileList) {
+                content.append(FileUtil.getText(crash));
+                content.append("\n");
+            }
+            LogReport.getInstance().getUpload().sendFile(zipfile, content.toString(), new ILogUpload.OnUploadFinishedListener() {
+                @Override
+                public void onSuceess() {
+                    LogUtil.d("邮件发送成功！！");
+                    FileUtil.deleteDir(logfolder);
+                    boolean checkresult = checkCacheSize(rootdir);
+                    LogUtil.d("缓存大小检查，是否删除root下的所有文件 = " + checkresult);
+                    stopSelf();
+                }
+
+                @Override
+                public void onError(String error) {
+                    LogUtil.d("OnUploadFinishedListener error " + error);
+                    boolean checkresult = checkCacheSize(rootdir);
+                    LogUtil.d("缓存大小检查，是否删除root下的所有文件 " + checkresult);
+                    stopSelf();
+                }
+            });
+        } else {
+            LogUtil.d("把日志文件压缩到压缩包中 ----> 失败");
+        }
+        return Service.START_NOT_STICKY;
     }
+
 
     /**
      * 检查文件夹是否超出缓存大小
@@ -93,16 +106,12 @@ public class UploadService extends Service {
      * @return
      */
 
-    //TODO 调用的司机，应该是发送完成后再删除
     public boolean checkCacheSize(File dir) {
         long dirSize = FileUtil.folderSize(dir);
-        if (dirSize > LogReport.getInstance().getCacheSize()) {
-            LogUtil.d("wenming", "超出大小，删除所以缓存文件");
+        if (dirSize >= LogReport.getInstance().getCacheSize()) {
             return FileUtil.deleteDir(dir);
         } else {
             return false;
         }
     }
-
-
 }

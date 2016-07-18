@@ -20,18 +20,15 @@
  */
 package com.wenming.library.upload;
 
-import android.app.Service;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.Build;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 抽象的日志报告类
@@ -43,6 +40,7 @@ public abstract class BaseUpload implements ILogUpload {
     public Future mFuture;
     public int TIMEOUT = 10;
 
+    public final static SimpleDateFormat yyyy_MM_dd_HH_mm_ss_SS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SS", Locale.getDefault());
 
     public BaseUpload(Context context) {
         mContext = context;
@@ -55,80 +53,39 @@ public abstract class BaseUpload implements ILogUpload {
      * @param body  报告正文，为设备信息及安装包的版本信息
      * @param file  崩溃日志
      */
-    protected abstract void sendReport(String title, String body, File file);
+    protected abstract void sendReport(String title, String body, File file, OnUploadFinishedListener onUploadFinishedListener);
 
     @Override
-    public void sendFile(final File file, final Service service, String content) {
+    public void sendFile(final File file, final String content, final OnUploadFinishedListener onUploadFinishedListener) {
         if (mFuture != null && !mFuture.isDone()) {
             mFuture.cancel(false);
         }
         new Thread(new Runnable() {
             @Override
             public void run() {
-                sendReport(buildTitle(mContext), buildBody(mContext), file);
-                service.stopSelf();
+                sendReport(buildTitle(mContext), buildBody(mContext, content), file, onUploadFinishedListener);
             }
         }).start();
     }
 
     /**
-     * 构建邮件的标题
+     * 构建标题
      *
      * @param context
      * @return
      */
     public String buildTitle(Context context) {
-        return "Crash Log: " + context.getPackageManager().getApplicationLabel(context.getApplicationInfo());
-
+        return "【CrashLog】  " + context.getString(context.getApplicationInfo().labelRes) + " " + yyyy_MM_dd_HH_mm_ss_SS.format(Calendar.getInstance().getTime());
     }
 
     /**
-     * 构建邮件的正文
+     * 构建正文
      *
      * @param context
      * @return
      */
-    public String buildBody(Context context) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("APPLICATION INFORMATION").append('\n');
-        PackageManager pm = context.getPackageManager();
-        ApplicationInfo ai = context.getApplicationInfo();
-        sb.append("Application : ").append(pm.getApplicationLabel(ai)).append('\n');
-        try {
-            PackageInfo pi = pm.getPackageInfo(ai.packageName, 0);
-            sb.append("Version Code: ").append(pi.versionCode).append('\n');
-            sb.append("Version Name: ").append(pi.versionName).append('\n');
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        sb.append('\n').append("DEVICE INFORMATION").append('\n');
-        sb.append("Board: ").append(Build.BOARD).append('\n');
-        sb.append("BOOTLOADER: ").append(Build.BOOTLOADER).append('\n');
-        sb.append("BRAND: ").append(Build.BRAND).append('\n');
-        sb.append("CPU_ABI: ").append(Build.CPU_ABI).append('\n');
-        sb.append("CPU_ABI2: ").append(Build.CPU_ABI2).append('\n');
-        sb.append("DEVICE: ").append(Build.DEVICE).append('\n');
-        sb.append("DISPLAY: ").append(Build.DISPLAY).append('\n');
-        sb.append("FINGERPRINT: ").append(Build.FINGERPRINT).append('\n');
-        sb.append("HARDWARE: ").append(Build.HARDWARE).append('\n');
-        sb.append("HOST: ").append(Build.HOST).append('\n');
-        sb.append("ID: ").append(Build.ID).append('\n');
-        sb.append("MANUFACTURER: ").append(Build.MANUFACTURER).append('\n');
-        sb.append("PRODUCT: ").append(Build.PRODUCT).append('\n');
-        sb.append("TAGS: ").append(Build.TAGS).append('\n');
-        sb.append("TYPE: ").append(Build.TYPE).append('\n');
-        sb.append("USER: ").append(Build.USER).append('\n');
-        return sb.toString();
-    }
-
-    @Override
-    public void closeApp(Thread thread, Throwable ex) {
-        try {
-            mFuture.get(TIMEOUT, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        sDefaultHandler.uncaughtException(thread, ex);
+    public String buildBody(Context context, String content) {
+        return content;
     }
 
 

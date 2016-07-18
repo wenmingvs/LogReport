@@ -82,7 +82,6 @@ public class FileUtil {
     public static ArrayList<File> getCrashList(File logdir) {
         ArrayList<File> crashFileList = new ArrayList<>();
         findFiles(logdir.getAbsolutePath(), crashFileList);
-        LogUtil.d("wenming", "matchingFiles length = " + crashFileList.size());
         return crashFileList;
     }
 
@@ -103,7 +102,7 @@ public class FileUtil {
     public static void findFiles(String baseDirName, List fileList) {
         File baseDir = new File(baseDirName);       // 创建一个File对象
         if (!baseDir.exists() || !baseDir.isDirectory()) {  // 判断目录是否存在
-            System.out.println("文件查找失败：" + baseDirName + "不是一个目录！");
+            Log.e(TAG, "文件查找失败：" + baseDirName + "不是一个目录！");
         }
         String tempName = null;
         //判断目录是否存在
@@ -140,5 +139,19 @@ public class FileUtil {
         return length;
     }
 
+    public static File createFile(File zipdir, File zipfile) {
+        if (!zipdir.exists()) {
+            zipdir.mkdirs();
+        }
+        if (!zipfile.exists()) {
+            try {
+                zipfile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e("TAG", e.getMessage());
+            }
+        }
+        return zipfile;
+    }
 
 }

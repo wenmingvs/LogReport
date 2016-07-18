@@ -13,6 +13,4 @@ public interface ISave {
 
     public void setEncodeType(IEncryption encodeType);
 
-    public void closeApp(Thread thread, Throwable ex);
-
 }
