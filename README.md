@@ -6,8 +6,9 @@
 ![enter image description here](http://ww1.sinaimg.cn/mw690/691cc151gw1f5zb0qor9nj208p092gm1.jpg)
 
 特性介绍  
+   
 | 特性|简介|
-| ------ | ------ |------ |
+| ------ | ------ |
 |自定义日志保存路径 |默认保存在Android/data/com.xxxx.xxxx/log中|
 |自定义日志缓存大小|默认大小为30M，超出后会自动清空文件夹|
 |支持多种上传方式|目前支持邮件上传与HTTP上传，会一并把文件夹下的所有日志打成压缩包作为附件上传|
