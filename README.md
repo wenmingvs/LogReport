@@ -93,6 +93,6 @@ LogReport.getInstance().upload(context);
 
 ## 自动提交崩溃issue到GitHub中
 请保证崩溃日志的邮件能到达您设定的Gmail邮箱中。如下图所示
-![Alt text](./1468917155319.png)
+
 
 
