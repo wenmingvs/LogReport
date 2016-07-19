@@ -44,7 +44,7 @@ public class LogReport {
     private ISave mLogSaver;
 
     /**
-     * 设置在哪种网络状态下上传，true为只在wifi模式下，false是wifi和移动网络
+     * 设置在哪种网络状态下上传，true为只在wifi模式下上传，false是wifi和移动网络都上传
      */
     private boolean mWifiOnly = true;
 
@@ -71,7 +71,7 @@ public class LogReport {
         return this;
     }
 
-    public LogReport setUploadNetWork(boolean wifiOnly) {
+    public LogReport setWifiOnly(boolean wifiOnly) {
         mWifiOnly = wifiOnly;
         return this;
     }
@@ -108,7 +108,7 @@ public class LogReport {
         if (mEncryption != null) {
             mLogSaver.setEncodeType(mEncryption);
         }
-        CrashHandler.getInstance().init(context, mLogSaver);
+        CrashHandler.getInstance().init(mLogSaver);
         LogWriter.getInstance().init(mLogSaver);
     }
 
@@ -123,7 +123,7 @@ public class LogReport {
     /**
      * 调用此方法，上传日志信息
      *
-     * @param applicationContext
+     * @param applicationContext 全局的application context，避免内存泄露
      */
     public void upload(Context applicationContext) {
         //如果没有设置上传，则不执行

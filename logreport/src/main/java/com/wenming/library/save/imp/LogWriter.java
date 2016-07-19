@@ -1,10 +1,10 @@
 package com.wenming.library.save.imp;
 
-import android.util.Log;
-
 import com.wenming.library.save.ISave;
+import com.wenming.library.util.LogUtil;
 
 /**
+ * 用于写入Log到本地
  * Created by wenmingvs on 2016/7/9.
  */
 public class LogWriter {
@@ -24,7 +24,7 @@ public class LogWriter {
     }
 
     public static void writeLog(String tag, String content) {
-        Log.d(tag, content);
+        LogUtil.d(tag, content);
         mSave.writeLog(tag, content);
     }
 }

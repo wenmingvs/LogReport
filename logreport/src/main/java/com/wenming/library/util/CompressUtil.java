@@ -10,14 +10,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class CompressUtil {
-      
-    /*
- *
- * Zips a file at a location and places the resulting zip file at the toLocation
- * Example: zipFileAtPath("downloads/myfolder", "downloads/myFolder.zip");
- */
 
-    public static  boolean zipFileAtPath(String sourcePath, String toLocation) {
+    public static boolean zipFileAtPath(String sourcePath, String toLocation) {
         final int BUFFER = 2048;
         File sourceFile = new File(sourcePath);
         try {
@@ -52,11 +46,8 @@ public class CompressUtil {
  *
  */
 
-    private static void zipSubFolder(ZipOutputStream out, File folder,
-                                     int basePathLength) throws IOException {
-
+    private static void zipSubFolder(ZipOutputStream out, File folder, int basePathLength) throws IOException {
         final int BUFFER = 2048;
-
         File[] fileList = folder.listFiles();
         BufferedInputStream origin = null;
         for (File file : fileList) {

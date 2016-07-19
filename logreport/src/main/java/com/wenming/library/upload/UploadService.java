@@ -43,26 +43,22 @@ public class UploadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         final File logfolder = new File(LogReport.getInstance().ROOT + "Log/");
-        File zipfolder = new File(LogReport.getInstance().ROOT + "AlreadyUploadLog/");
-        File zipfile = new File(zipfolder, "UploadOn" + ZIP_FOLDER_TIME_FORMAT.format(System.currentTimeMillis()) + ".zip");
-        final File rootdir = new File(ROOT);
-        StringBuilder content = new StringBuilder();
-        //crashFileList = FileUtil.getCrashList(logfolder);
-
         // 如果Log文件夹都不存在，说明不存在崩溃日志，检查缓存是否超出大小后退出
         if (!logfolder.exists() || logfolder.listFiles().length == 0) {
             LogUtil.d("Log文件夹都不存在，无需上传");
-            boolean checkresult = checkCacheSize(rootdir);
-            LogUtil.d("缓存大小检查，是否删除root下的所有文件 " + checkresult);
             return Service.START_NOT_STICKY;
         }
-
-        ArrayList<File> crashFileList = FileUtil.getCrashList(logfolder);
         //只存在log文件，但是不存在崩溃日志，也不会上传
+        ArrayList<File> crashFileList = FileUtil.getCrashList(logfolder);
         if (crashFileList.size() == 0) {
             LogUtil.d("只存在log文件，但是不存在崩溃日志，所以不上传");
             return Service.START_NOT_STICKY;
         }
+
+        File zipfolder = new File(LogReport.getInstance().ROOT + "AlreadyUploadLog/");
+        File zipfile = new File(zipfolder, "UploadOn" + ZIP_FOLDER_TIME_FORMAT.format(System.currentTimeMillis()) + ".zip");
+        final File rootdir = new File(ROOT);
+        StringBuilder content = new StringBuilder();
 
         //创建文件，如果父路径缺少，创建父路径
         zipfile = FileUtil.createFile(zipfolder, zipfile);
@@ -77,7 +73,7 @@ public class UploadService extends Service {
             LogReport.getInstance().getUpload().sendFile(zipfile, content.toString(), new ILogUpload.OnUploadFinishedListener() {
                 @Override
                 public void onSuceess() {
-                    LogUtil.d("邮件发送成功！！");
+                    LogUtil.d("日志发送成功！！");
                     FileUtil.deleteDir(logfolder);
                     boolean checkresult = checkCacheSize(rootdir);
                     LogUtil.d("缓存大小检查，是否删除root下的所有文件 = " + checkresult);
@@ -86,7 +82,7 @@ public class UploadService extends Service {
 
                 @Override
                 public void onError(String error) {
-                    LogUtil.d("OnUploadFinishedListener error " + error);
+                    LogUtil.d("日志发送失败：  = " + error);
                     boolean checkresult = checkCacheSize(rootdir);
                     LogUtil.d("缓存大小检查，是否删除root下的所有文件 " + checkresult);
                     stopSelf();

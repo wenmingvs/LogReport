@@ -10,6 +10,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
+ * AES加密，加密级别会DES高很多，支持128，192.256位加密
  * Created by wenmingvs on 2016/7/6.
  */
 public class AESEncode implements IEncryption {
@@ -17,12 +18,9 @@ public class AESEncode implements IEncryption {
     private final static String HEX = "0123456789ABCDEF";
     private final static int JELLY_BEAN_4_2 = 17;
     /**
-     * 默认使用的key
+     * 默认使用的加密的key
      */
     private final static String DEFAULT_KEY = "wenmingvs";
-
-    private static String EXAMPLE_PASSWORD = "LeighHunt";
-    private static String SALT = "wenmingvs";
 
     /**
      * 使用默认的密钥进行加密
@@ -76,7 +74,7 @@ public class AESEncode implements IEncryption {
     }
 
     /**
-     * 获取256位的加密密钥
+     * 获取128位的加密密钥
      *
      * @param password
      * @return

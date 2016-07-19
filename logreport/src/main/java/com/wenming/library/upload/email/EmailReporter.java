@@ -85,6 +85,14 @@ public class EmailReporter extends BaseUpload {
         mPort = port;
     }
 
+    /**
+     * 发送邮件
+     *
+     * @param title                    报告标题
+     * @param body                     报告正文，为设备信息及安装包的版本信息
+     * @param file                     崩溃日志，发送压缩包
+     * @param onUploadFinishedListener
+     */
     @Override
     protected void sendReport(String title, String body, File file, OnUploadFinishedListener onUploadFinishedListener) {
         MailInfo sender = new MailInfo()
@@ -102,7 +110,7 @@ public class EmailReporter extends BaseUpload {
             sender.send();
             onUploadFinishedListener.onSuceess();
         } catch (Exception e) {
-            onUploadFinishedListener.onError(e.getMessage().toString());
+            onUploadFinishedListener.onError("Send Email fail！Accout or SMTP verification error ！");
             e.printStackTrace();
         }
     }

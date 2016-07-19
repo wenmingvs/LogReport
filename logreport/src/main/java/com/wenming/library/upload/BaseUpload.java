@@ -26,8 +26,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
@@ -36,9 +34,7 @@ import java.util.concurrent.Future;
 public abstract class BaseUpload implements ILogUpload {
     public static final Thread.UncaughtExceptionHandler sDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
     public Context mContext;
-    public ExecutorService mSingleExecutor = Executors.newSingleThreadExecutor();
     public Future mFuture;
-    public int TIMEOUT = 10;
 
     public final static SimpleDateFormat yyyy_MM_dd_HH_mm_ss_SS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SS", Locale.getDefault());
 

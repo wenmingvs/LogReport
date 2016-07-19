@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * HTTP的post请求方式发送。
  */
-public class CrashHttpReporter extends BaseUpload {
+public class HttpReporter extends BaseUpload {
     HttpClient httpclient = new DefaultHttpClient();
     private String url;
     private Map<String, String> otherParams;
@@ -48,10 +48,8 @@ public class CrashHttpReporter extends BaseUpload {
     private String toParam;
     private HttpReportCallback callback;
 
-    public CrashHttpReporter(Context context) {
+    public HttpReporter(Context context) {
         super(context);
-//        httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION,
-//                HttpVersion.HTTP_1_1);
     }
 
     @Override
@@ -72,22 +70,15 @@ public class CrashHttpReporter extends BaseUpload {
             HttpResponse resp = httpclient.execute(req);
             int statusCode = resp.getStatusLine().getStatusCode();
             String responseString = EntityUtils.toString(resp.getEntity());
-//            if (callback != null) {
-//                if (callback.isSuccess(statusCode, responseString)) {
-//                    //deleteLog(file);
-//                }
-//            } else if (statusCode == 200) {
-//                //deleteLog(file);
-//            }
             onUploadFinishedListener.onSuceess();
         } catch (Exception e) {
-            onUploadFinishedListener.onError(e.getMessage().toString());
+            onUploadFinishedListener.onError("Http send fail!!!!!!");
             e.printStackTrace();
         }
     }
 
     private void deleteLog(File file) {
-        Log.d("CrashHttpReporter", "delete: " + file.getName());
+        Log.d("HttpReporter", "delete: " + file.getName());
         file.delete();
     }
 
@@ -100,7 +91,7 @@ public class CrashHttpReporter extends BaseUpload {
      *
      * @param url
      */
-    public CrashHttpReporter setUrl(String url) {
+    public HttpReporter setUrl(String url) {
         this.url = url;
         return this;
     }
@@ -114,7 +105,7 @@ public class CrashHttpReporter extends BaseUpload {
      *
      * @param titleParam
      */
-    public CrashHttpReporter setTitleParam(String titleParam) {
+    public HttpReporter setTitleParam(String titleParam) {
         this.titleParam = titleParam;
         return this;
     }
@@ -128,7 +119,7 @@ public class CrashHttpReporter extends BaseUpload {
      *
      * @param bodyParam
      */
-    public CrashHttpReporter setBodyParam(String bodyParam) {
+    public HttpReporter setBodyParam(String bodyParam) {
         this.bodyParam = bodyParam;
         return this;
     }
@@ -142,7 +133,7 @@ public class CrashHttpReporter extends BaseUpload {
      *
      * @param fileParam
      */
-    public CrashHttpReporter setFileParam(String fileParam) {
+    public HttpReporter setFileParam(String fileParam) {
         this.fileParam = fileParam;
         return this;
     }
@@ -169,7 +160,7 @@ public class CrashHttpReporter extends BaseUpload {
      *
      * @param to
      */
-    public CrashHttpReporter setTo(String to) {
+    public HttpReporter setTo(String to) {
         this.to = to;
         return this;
     }
@@ -183,7 +174,7 @@ public class CrashHttpReporter extends BaseUpload {
      *
      * @param callback
      */
-    public CrashHttpReporter setCallback(HttpReportCallback callback) {
+    public HttpReporter setCallback(HttpReportCallback callback) {
         this.callback = callback;
         return this;
     }
@@ -197,13 +188,13 @@ public class CrashHttpReporter extends BaseUpload {
      *
      * @param toParam
      */
-    public CrashHttpReporter setToParam(String toParam) {
+    public HttpReporter setToParam(String toParam) {
         this.toParam = toParam;
         return this;
     }
 
-    
-    public static interface HttpReportCallback {
+
+    public interface HttpReportCallback {
         /**
          * 判断是否发送成功。它在发送日志的方法中被调用，如果成功，则日志文件会被删除。
          *

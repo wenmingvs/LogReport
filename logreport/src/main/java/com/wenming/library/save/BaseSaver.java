@@ -86,13 +86,13 @@ public abstract class BaseSaver implements ISave {
                 .append(currThread.getId())
                 .append(" Thread Name:　")
                 .append(currThread.getName())
-                .append(" ")
+                .append(" Time: ")
                 .append(timeStr)
                 .append(" FromClass: ")
                 .append(tag)
                 .append(" > ")
                 .append(tips);
-        Log.d("wenming", "添加的内容是:\n" + sb.toString());
+        LogUtil.d("添加的内容是:\n" + sb.toString());
         return sb.toString();
     }
 
@@ -122,10 +122,10 @@ public abstract class BaseSaver implements ISave {
         sb.append("HARDWARE: ").append(Build.HARDWARE).append('\n').append('\n');
 
         // TODO 支持添加更多信息
-        Log.d("wenming", "创建的设备信息（加密前） = \n" + sb.toString());
+        LogUtil.d("创建的设备信息（加密前） = \n" + sb.toString());
         //加密信息
         sb = new StringBuilder(encodeString(sb.toString()));
-        Log.d("wenming", "创建的设备信息（加密后） = \n" + sb.toString());
+        LogUtil.d("创建的设备信息（加密后） = \n" + sb.toString());
         try {
             if (!file.exists()) {
                 file.createNewFile();
@@ -138,7 +138,6 @@ public abstract class BaseSaver implements ISave {
         }
         return file;
     }
-
 
 
     @Override
@@ -194,7 +193,7 @@ public abstract class BaseSaver implements ISave {
                     return;
                 }
                 if (!logsDir.exists()) {
-                    Log.d("wenming", "logsDir.mkdirs() =  +　" + logsDir.mkdirs());
+                    LogUtil.d("logsDir.mkdirs() =  +　" + logsDir.mkdirs());
                 }
                 if (!logFile.exists()) {
                     createFile(logFile, mContext);
@@ -220,7 +219,7 @@ public abstract class BaseSaver implements ISave {
             String encoderesult = encodeString(content);
             //long endTime = System.nanoTime();
             //Log.d("wenming", "加密耗时为 = ： " + String.valueOf((double) (endTime - startTime) / 1000000) + "ms");
-            Log.d("wenming", "最终写到文本的Log：\n" + content);
+            LogUtil.d("最终写到文本的Log：\n" + content);
             outputStream = new FileOutputStream(logFile);
             outputStream.write(encoderesult.getBytes("UTF-8"));
         } catch (Exception e) {

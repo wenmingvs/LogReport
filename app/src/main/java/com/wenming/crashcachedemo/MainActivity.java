@@ -20,18 +20,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        String content = "test";
-//        AESEncode AESEncode = new AESEncode();
-//        try {
-//            String encode = AESEncode.encrypt(content);
-//            Log.d("wenmingvs", "encode = " + encode);
-//            Log.d("wenmingvs", "decode = " + AESEncode.decrypt(encode));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
         LogReport.getInstance().upload(this);
+        setUpListener();
+    }
+
+    private void setUpListener() {
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
         button3 = (Button) findViewById(R.id.button3);
@@ -46,17 +39,15 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogWriter.writeLog("wenming", "郭文明真帅！！！！");
+                LogWriter.writeLog("wenming", "打Log测试！！！！");
             }
         });
 
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File file = new File(LogReport.ROOT);
-                FileUtil.deleteDir(file);
+                FileUtil.deleteDir(new File(LogReport.ROOT));
             }
         });
-
     }
 }
