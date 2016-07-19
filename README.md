@@ -3,6 +3,8 @@
 
 使用邮件形式发送崩溃信息，配合第三方工具使用，可以自动提交崩溃信息到GitHub issue中，方便开发者利用GitHub的issue系统来对开源项目的Bug进行进行追踪管理，详见下面
 
+![enter image description here](http://ww1.sinaimg.cn/mw690/691cc151gw1f5zb0qor9nj208p092gm1.jpg)
+
 | 特性|简介|
 | ------ | ------ |------ |
 |自定义日志保存路径 |默认保存在Android/data/com.xxxx.xxxx/log中|
@@ -87,7 +89,7 @@ LogReport.getInstance().upload(context);
 测试帐号   
 帐号：wenmingvs@163.com   
 登录密码：apptest123   
-客户端授权码：apptest1234      
+客户端授权码：apptest1234     
 
 ## 自动提交崩溃issue到GitHub中
 请保证崩溃日志的邮件能到达您设定的Gmail邮箱中。如下图所示
