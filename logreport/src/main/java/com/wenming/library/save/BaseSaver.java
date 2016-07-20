@@ -99,7 +99,7 @@ public abstract class BaseSaver implements ISave {
     /**
      * 写入设备的各种参数信息之前，请确保File文件以及他的父路径是存在的
      *
-     * @param file
+     * @param file 需要创建的文件
      */
     public File createFile(File file, Context context) {
         StringBuilder sb = new StringBuilder();
@@ -121,14 +121,17 @@ public abstract class BaseSaver implements ISave {
         sb.append("DEVICE: ").append(Build.DEVICE).append('\n');
         sb.append("HARDWARE: ").append(Build.HARDWARE).append('\n').append('\n');
 
-        // TODO 支持添加更多信息
+
         LogUtil.d("创建的设备信息（加密前） = \n" + sb.toString());
         //加密信息
         sb = new StringBuilder(encodeString(sb.toString()));
         LogUtil.d("创建的设备信息（加密后） = \n" + sb.toString());
         try {
             if (!file.exists()) {
-                file.createNewFile();
+                boolean successCreate = file.createNewFile();
+                if (!successCreate) {
+                    return null;
+                }
             }
             FileOutputStream fos = new FileOutputStream(file);
             fos.write(sb.toString().getBytes());
@@ -176,38 +179,36 @@ public abstract class BaseSaver implements ISave {
     /**
      * 异步操作，务必加锁
      *
-     * @param tag
-     * @param content
+     * @param tag     Log的标签
+     * @param content Log的内容
      */
     @Override
     public void writeLog(final String tag, final String content) {
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                TimeLogFolder =
-                        LogReport.ROOT + "/Log/" + yyyy_mm_dd.format(new Date(System.currentTimeMillis())) + "/";
-                final File logsDir = new File(TimeLogFolder);
-                final File logFile = new File(logsDir, LOG_FILE_NAME_MONITOR);
-                if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                    LogUtil.d("SDcard 不可用");
-                    return;
+                synchronized (BaseSaver.class) {
+                    TimeLogFolder = LogReport.getInstance().getROOT() + "/Log/" + yyyy_mm_dd.format(new Date(System.currentTimeMillis())) + "/";
+                    final File logsDir = new File(TimeLogFolder);
+                    final File logFile = new File(logsDir, LOG_FILE_NAME_MONITOR);
+                    if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                        LogUtil.d("SDcard 不可用");
+                        return;
+                    }
+                    if (!logsDir.exists()) {
+                        LogUtil.d("logsDir.mkdirs() =  +　" + logsDir.mkdirs());
+                    }
+                    if (!logFile.exists()) {
+                        createFile(logFile, mContext);
+                    }
+                    //long startTime = System.nanoTime();
+                    //long endTime = System.nanoTime();
+                    //Log.d("wenming", "解密耗时为 = ： " + String.valueOf((double) (endTime - startTime) / 1000000) + "ms");
+                    //Log.d("wenming", "读取本地的Log文件，并且解密 = \n" + preContent.toString());
+                    //Log.d("wenming", "即将保存的Log文件内容 = \n" + preContent.toString());
+                    writeText(logFile, decodeString(FileUtil.getText(logFile)) + formatLogMsg(tag, content) + "\n");
                 }
-                if (!logsDir.exists()) {
-                    LogUtil.d("logsDir.mkdirs() =  +　" + logsDir.mkdirs());
-                }
-                if (!logFile.exists()) {
-                    createFile(logFile, mContext);
-                }
-                //long startTime = System.nanoTime();
-                StringBuilder preContent = new StringBuilder(decodeString(FileUtil.getText(logFile)));
-                //long endTime = System.nanoTime();
-                //Log.d("wenming", "解密耗时为 = ： " + String.valueOf((double) (endTime - startTime) / 1000000) + "ms");
-                //Log.d("wenming", "读取本地的Log文件，并且解密 = \n" + preContent.toString());
-                preContent.append(formatLogMsg(tag, content) + "\n");
-                //Log.d("wenming", "即将保存的Log文件内容 = \n" + preContent.toString());
-                synchronized (logFile) {
-                    writeText(logFile, preContent.toString());
-                }
+
             }
         });
     }

@@ -23,10 +23,8 @@ public class AESEncode implements IEncryption {
     private final static String DEFAULT_KEY = "wenmingvs";
 
     /**
-     * 使用默认的密钥进行加密
-     *
-     * @param src
-     * @return
+     * @param src 需要加密的内容
+     * @return 使用默认的密钥进行加密后的内容
      * @throws Exception
      */
     public String encrypt(String src) throws Exception {
@@ -35,8 +33,8 @@ public class AESEncode implements IEncryption {
 
 
     /**
-     * @param encrypted
-     * @return
+     * @param encrypted 加密的内容
+     * @return 使用默认的密钥进行解密后的内容
      * @throws Exception
      */
     public String decrypt(String encrypted) throws Exception {
@@ -45,11 +43,9 @@ public class AESEncode implements IEncryption {
 
 
     /**
-     * 加密,返回String类型
-     *
      * @param key 密钥
      * @param src 加密文本
-     * @return
+     * @return 加密, 返回String类型
      * @throws Exception
      */
     public String encrypt(String key, String src) throws Exception {
@@ -59,11 +55,9 @@ public class AESEncode implements IEncryption {
     }
 
     /**
-     * 解密,返回String类型
-     *
      * @param key       密钥
      * @param encrypted 待揭秘文本
-     * @return
+     * @return 解密, 返回String类型
      * @throws Exception
      */
     public String decrypt(String key, String encrypted) throws Exception {
@@ -74,15 +68,13 @@ public class AESEncode implements IEncryption {
     }
 
     /**
-     * 获取128位的加密密钥
-     *
-     * @param password
-     * @return
+     * @param password 密钥
+     * @return 返回128位的加密密钥
      * @throws Exception
      */
     private static byte[] getRawKey(byte[] password) throws Exception {
         KeyGenerator kgen = KeyGenerator.getInstance("AES");
-        SecureRandom sr = null;
+        SecureRandom sr;
         // 在4.2以上版本中，SecureRandom获取方式发生了改变
         if (android.os.Build.VERSION.SDK_INT >= JELLY_BEAN_4_2) {
             sr = SecureRandom.getInstance("SHA1PRNG", "Crypto");
@@ -93,47 +85,44 @@ public class AESEncode implements IEncryption {
         // 256 bits or 128 bits,192bits
         kgen.init(128, sr);// 最好使用128位加密，其他两种会有莫名其妙的问题
         SecretKey skey = kgen.generateKey();
-        byte[] raw = skey.getEncoded();
-        return raw;
+        return skey.getEncoded();
     }
 
     /**
      * 真正的加密过程
      *
-     * @param key
-     * @param src
-     * @return
+     * @param key 加密的密钥
+     * @param src 需要加密的内容
+     * @return 返回加密后的内容
      * @throws Exception
      */
     private static byte[] encrypt(byte[] key, byte[] src) throws Exception {
         SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-        byte[] encrypted = cipher.doFinal(src);
-        return encrypted;
+        return cipher.doFinal(src);
     }
 
     /**
      * 真正的解密过程
      *
-     * @param key
-     * @param encrypted
-     * @return
+     * @param key       解密的密钥
+     * @param encrypted 加密的内容
+     * @return 解密的内容
      * @throws Exception
      */
     private static byte[] decrypt(byte[] key, byte[] encrypted) throws Exception {
         SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-        byte[] decrypted = cipher.doFinal(encrypted);
-        return decrypted;
+        return cipher.doFinal(encrypted);
     }
 
     /**
      * 解密后的文本还要做位运算，才能得到正确的内容
      *
-     * @param txt
-     * @return
+     * @param txt 需要做位运算的内容
+     * @return 返回16进制的内容
      */
     private static String toHex(String txt) {
         return toHex(txt.getBytes());
@@ -156,8 +145,8 @@ public class AESEncode implements IEncryption {
         if (buf == null)
             return "";
         StringBuffer result = new StringBuffer(2 * buf.length);
-        for (int i = 0; i < buf.length; i++) {
-            appendHex(result, buf[i]);
+        for (byte aBuf : buf) {
+            appendHex(result, aBuf);
         }
         return result.toString();
     }

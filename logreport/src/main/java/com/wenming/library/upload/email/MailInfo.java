@@ -20,8 +20,6 @@
  */
 package com.wenming.library.upload.email;
 
-import android.util.Log;
-
 import java.util.Date;
 import java.util.Properties;
 

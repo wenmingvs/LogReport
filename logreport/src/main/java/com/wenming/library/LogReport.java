@@ -14,11 +14,12 @@ import com.wenming.library.upload.UploadService;
 import com.wenming.library.util.NetUtil;
 
 /**
+ * 日志崩溃管理框架
  * Created by wenmingvs on 2016/7/7.
  */
 public class LogReport {
 
-    private static LogReport logReport = new LogReport();
+    private static LogReport mLogReport;
     /**
      * 设置上传的方式
      */
@@ -31,7 +32,7 @@ public class LogReport {
     /**
      * 设置日志保存的路径
      */
-    public static String ROOT;
+    private String mROOT;
 
     /**
      * 设置加密方式
@@ -52,12 +53,20 @@ public class LogReport {
     private LogReport() {
     }
 
+
     public static LogReport getInstance() {
-        return logReport;
+        if (mLogReport == null) {
+            synchronized (LogReport.class) {
+                if (mLogReport == null) {
+                    mLogReport = new LogReport();
+                }
+            }
+        }
+        return mLogReport;
     }
 
     public LogReport setCacheSize(long cacheSize) {
-        this.mCacheSize = mCacheSize;
+        this.mCacheSize = cacheSize;
         return this;
     }
 
@@ -81,12 +90,12 @@ public class LogReport {
         if (TextUtils.isEmpty(logDir)) {
             //如果SD不可用，则存储在沙盒中
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                ROOT = context.getExternalCacheDir().getAbsolutePath();
+                mROOT = context.getExternalCacheDir().getAbsolutePath();
             } else {
-                ROOT = context.getCacheDir().getAbsolutePath();
+                mROOT = context.getCacheDir().getAbsolutePath();
             }
         } else {
-            ROOT = logDir;
+            mROOT = logDir;
         }
         return this;
     }
@@ -96,13 +105,18 @@ public class LogReport {
         return this;
     }
 
+
+    public String getROOT() {
+        return mROOT;
+    }
+
     public void init(Context context) {
-        if (TextUtils.isEmpty(ROOT)) {
+        if (TextUtils.isEmpty(mROOT)) {
             //如果SD不可用，则存储在沙盒中
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                ROOT = context.getExternalCacheDir().getAbsolutePath();
+                mROOT = context.getExternalCacheDir().getAbsolutePath();
             } else {
-                ROOT = context.getCacheDir().getAbsolutePath();
+                mROOT = context.getCacheDir().getAbsolutePath();
             }
         }
         if (mEncryption != null) {

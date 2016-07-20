@@ -26,8 +26,8 @@ public class FileUtil {
         if (dir.isDirectory()) {
             String[] children = dir.list();
             // 递归删除目录中的子目录下
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
+            for (String aChildren : children) {
+                boolean success = deleteDir(new File(dir, aChildren));
                 if (!success) {
                     return false;
                 }
@@ -42,7 +42,7 @@ public class FileUtil {
      * 读取File中的内容
      *
      * @param file 请务必保证file文件已经存在
-     * @return
+     * @return file中的内容
      */
     public static String getText(File file) {
         if (!file.exists()) {
@@ -76,8 +76,8 @@ public class FileUtil {
     /**
      * 遍历获取Log文件夹下的所有crash文件
      *
-     * @param logdir
-     * @return
+     * @param logdir 从哪个文件夹下找起
+     * @return 返回crash文件列表
      */
     public static ArrayList<File> getCrashList(File logdir) {
         ArrayList<File> crashFileList = new ArrayList<>();
@@ -99,17 +99,17 @@ public class FileUtil {
      * @param baseDirName 查找的文件夹路径
      * @param fileList    查找到的文件集合
      */
-    public static void findFiles(String baseDirName, List fileList) {
+    public static void findFiles(String baseDirName, List<File> fileList) {
         File baseDir = new File(baseDirName);       // 创建一个File对象
         if (!baseDir.exists() || !baseDir.isDirectory()) {  // 判断目录是否存在
-            Log.e(TAG, "文件查找失败：" + baseDirName + "不是一个目录！");
+            LogUtil.e(TAG, "文件查找失败：" + baseDirName + "不是一个目录！");
         }
-        String tempName = null;
+        String tempName;
         //判断目录是否存在
         File tempFile;
         File[] files = baseDir.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            tempFile = files[i];
+        for (File file : files) {
+            tempFile = file;
             if (tempFile.isDirectory()) {
                 findFiles(tempFile.getAbsolutePath(), fileList);
             } else if (tempFile.isFile()) {
@@ -125,8 +125,8 @@ public class FileUtil {
     /**
      * 获取文件夹的大小
      *
-     * @param directory
-     * @return
+     * @param directory 需要测量大小的文件夹
+     * @return 返回文件夹大小，单位byte
      */
     public static long folderSize(File directory) {
         long length = 0;
@@ -141,11 +141,13 @@ public class FileUtil {
 
     public static File createFile(File zipdir, File zipfile) {
         if (!zipdir.exists()) {
-            zipdir.mkdirs();
+            boolean result = zipdir.mkdirs();
+            LogUtil.d("TAG", "zipdir.mkdirs() = " + result);
         }
         if (!zipfile.exists()) {
             try {
-                zipfile.createNewFile();
+                boolean result = zipfile.createNewFile();
+                LogUtil.d("TAG", "zipdir.createNewFile() = " + result);
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.e("TAG", e.getMessage());

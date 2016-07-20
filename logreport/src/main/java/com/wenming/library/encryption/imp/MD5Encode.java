@@ -10,8 +10,8 @@ import java.security.NoSuchAlgorithmException;
 public class MD5Encode {
 
     /***
-     * @param data
-     * @return
+     * @param data 需要加密的内容
+     * @return 返回加密内容
      */
     public static String encrypt(String data) {
         try {
@@ -22,15 +22,18 @@ public class MD5Encode {
             // 使用bytes更新摘要
             algorithm.update(data.getBytes());
             // 使用指定的byte数组对摘要进行最的更新，然后完成摘要计算
-            return toHexString(algorithm.digest(), "");
+            return toHexString(algorithm.digest());
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         return "";
     }
 
-    // 将字符串中的每个字符转换为十六进制
-    private static String toHexString(byte[] bytes, String separator) {
+    /**
+     * @param bytes 将字符串中的每个字符转换为十六进制
+     * @return 返回十六进制的内容
+     */
+    private static String toHexString(byte[] bytes) {
         StringBuilder hexstring = new StringBuilder();
         for (byte b : bytes) {
             String hex = Integer.toHexString(0xFF & b);

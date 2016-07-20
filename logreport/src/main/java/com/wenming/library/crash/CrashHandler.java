@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 /**
+ * 自定义的崩溃捕获Handler
  * Created by wenmingvs on 2016/7/4.
  */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
@@ -35,7 +36,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     /**
      * 初始化,，设置此CrashHandler来响应崩溃事件
      *
-     * @param logSaver
+     * @param logSaver 保存的方式
      */
     public void init(ISave logSaver) {
         mSave = logSaver;
@@ -57,13 +58,12 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             cause = cause.getCause();
         }
         printWriter.close();
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("↓↓↓↓exception↓↓↓↓\n");
-        stringBuilder.append(writer.toString());
-        mSave.writeCrash(thread, ex, TAG, stringBuilder.toString());
+        String stringBuilder = "↓↓↓↓exception↓↓↓↓\n" +
+                writer.toString();
+        mSave.writeCrash(thread, ex, TAG, stringBuilder);
         // 如果处理了，让主程序继续运行3秒再退出，保证异步的写操作能及时完成
         try {
-            thread.sleep(3000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

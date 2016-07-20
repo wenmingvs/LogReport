@@ -9,6 +9,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
+ * DES加密工具类
  * Created by wenmingvs on 2016/7/6.
  */
 public class DESEncode implements IEncryption {
@@ -39,8 +40,8 @@ public class DESEncode implements IEncryption {
     }
 
     /****
-     * @param src 解密的内容
-     * @return
+     * @param src 加密的内容
+     * @return 返回解密的内容
      * @throws Exception
      */
     public String decrypt(String src) throws Exception {
@@ -70,7 +71,7 @@ public class DESEncode implements IEncryption {
 
     /****
      * @param key 解密的密钥
-     * @return
+     * @return 返回解密后的内容
      * @throws Exception
      */
     public String decrypt(String key, String encodeString) throws Exception {

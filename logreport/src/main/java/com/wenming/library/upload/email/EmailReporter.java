@@ -41,57 +41,45 @@ public class EmailReporter extends BaseUpload {
     }
 
     /**
-     * 设置接收者
-     *
-     * @param receiveEmail
+     * @param receiveEmail 设置接收者
      */
     public void setReceiver(String receiveEmail) {
         mReceiveEmail = receiveEmail;
     }
 
     /**
-     * 设置发送者邮箱
-     *
-     * @param email
+     * @param email 设置发送者邮箱
      */
     public void setSender(String email) {
         mSendEmail = email;
     }
 
     /**
-     * 设置发送者密码
-     *
-     * @param password
+     * @param password 设置发送者密码
      */
     public void setSendPassword(String password) {
         mSendPassword = password;
     }
 
     /**
-     * 设置SMTP 主机
-     *
-     * @param host
+     * @param host 设置SMTP 主机
      */
     public void setSMTPHost(String host) {
         mHost = host;
     }
 
     /**
-     * 设置端口
-     *
-     * @param port
+     * @param port 设置端口
      */
     public void setPort(String port) {
         mPort = port;
     }
 
     /**
-     * 发送邮件
-     *
      * @param title                    报告标题
      * @param body                     报告正文，为设备信息及安装包的版本信息
      * @param file                     崩溃日志，发送压缩包
-     * @param onUploadFinishedListener
+     * @param onUploadFinishedListener 成功与否的回调
      */
     @Override
     protected void sendReport(String title, String body, File file, OnUploadFinishedListener onUploadFinishedListener) {

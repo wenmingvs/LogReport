@@ -14,8 +14,6 @@ import java.io.File;
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
 
-    private Button button1, button2, button3;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,9 +23,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpListener() {
-        button1 = (Button) findViewById(R.id.button1);
-        button2 = (Button) findViewById(R.id.button2);
-        button3 = (Button) findViewById(R.id.button3);
+        Button button1 = (Button) findViewById(R.id.button1);
+        Button button2 = (Button) findViewById(R.id.button2);
+        Button button3 = (Button) findViewById(R.id.button3);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,14 +37,14 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogWriter.writeLog("wenming", "打Log测试！！！！");
+                LogWriter.writeLog(TAG, "打Log测试！！！！");
             }
         });
 
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FileUtil.deleteDir(new File(LogReport.ROOT));
+                FileUtil.deleteDir(new File(LogReport.getInstance().getROOT()));
             }
         });
     }

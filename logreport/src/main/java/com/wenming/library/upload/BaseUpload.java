@@ -32,7 +32,6 @@ import java.util.concurrent.Future;
  * 抽象的日志报告类
  */
 public abstract class BaseUpload implements ILogUpload {
-    public static final Thread.UncaughtExceptionHandler sDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
     public Context mContext;
     public Future mFuture;
 
@@ -67,8 +66,8 @@ public abstract class BaseUpload implements ILogUpload {
     /**
      * 构建标题
      *
-     * @param context
-     * @return
+     * @param context 上下文
+     * @return 返回标题的string文本
      */
     public String buildTitle(Context context) {
         return "【CrashLog】  " + context.getString(context.getApplicationInfo().labelRes) + " " + yyyy_MM_dd_HH_mm_ss_SS.format(Calendar.getInstance().getTime());
@@ -77,8 +76,8 @@ public abstract class BaseUpload implements ILogUpload {
     /**
      * 构建正文
      *
-     * @param context
-     * @return
+     * @param context 上下文
+     * @return 返回正文的string文本
      */
     public String buildBody(Context context, String content) {
         return content;

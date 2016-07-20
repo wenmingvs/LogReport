@@ -20,7 +20,7 @@ public class CrashWriter extends BaseSaver {
     private final static String TAG = "CrashWriter";
 
     /**
-     * 崩溃日志文件的文件名：eg CrashLog2016-07-19.txt
+     * 崩溃日志文件的文件名：eg： CrashLog2016-07-19.txt
      */
     public final static String LOG_FILE_NAME_EXCEPTION = "CrashLog" + LOG_CREATE_TIME + SAVE_FILE_TYPE;
 
@@ -33,7 +33,7 @@ public class CrashWriter extends BaseSaver {
     /**
      * 初始化，继承父类
      *
-     * @param context
+     * @param context 上下文
      */
     public CrashWriter(Context context) {
         super(context);
@@ -52,27 +52,27 @@ public class CrashWriter extends BaseSaver {
         mThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                TimeLogFolder = LogReport.ROOT + "Log/" + yyyy_mm_dd.format(new Date(System.currentTimeMillis())) + "/";
-                File logsDir = new File(TimeLogFolder);
-                File crashFile = new File(logsDir, LOG_FILE_NAME_EXCEPTION);
-                if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                    LogUtil.d("SDcard 不可用");
-                    return;
-                }
-                if (!logsDir.exists()) {
-                    LogUtil.d("logsDir.mkdirs() =  +　" + logsDir.mkdirs());
-                }
-                if (!crashFile.exists()) {
-                    createFile(crashFile, mContext);
-                }
-                StringBuilder preContent = new StringBuilder(decodeString(FileUtil.getText(crashFile)));
-                LogUtil.d("读取本地的Crash文件，并且解密 = \n" + preContent.toString());
-                preContent.append(formatLogMsg(tag, content) + "\n");
-                LogUtil.d("即将保存的Crash文件内容 = \n" + preContent.toString());
-                synchronized (crashFile) {
+                synchronized (BaseSaver.class) {
+                    TimeLogFolder = LogReport.getInstance().getROOT() + "Log/" + yyyy_mm_dd.format(new Date(System.currentTimeMillis())) + "/";
+                    File logsDir = new File(TimeLogFolder);
+                    File crashFile = new File(logsDir, LOG_FILE_NAME_EXCEPTION);
+                    if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                        LogUtil.d(TAG, "SDcard 不可用");
+                        return;
+                    }
+                    if (!logsDir.exists()) {
+                        LogUtil.d(TAG, "logsDir.mkdirs() =  +　" + logsDir.mkdirs());
+                    }
+                    if (!crashFile.exists()) {
+                        createFile(crashFile, mContext);
+                    }
+                    StringBuilder preContent = new StringBuilder(decodeString(FileUtil.getText(crashFile)));
+                    LogUtil.d(TAG, "读取本地的Crash文件，并且解密 = \n" + preContent.toString());
+                    preContent.append(formatLogMsg(tag, content)).append("\n");
+                    LogUtil.d(TAG, "即将保存的Crash文件内容 = \n" + preContent.toString());
                     writeText(crashFile, preContent.toString());
+                    sDefaultHandler.uncaughtException(thread, ex);
                 }
-                sDefaultHandler.uncaughtException(thread, ex);
             }
         });
 

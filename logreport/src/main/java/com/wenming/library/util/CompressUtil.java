@@ -15,7 +15,7 @@ public class CompressUtil {
         final int BUFFER = 2048;
         File sourceFile = new File(sourcePath);
         try {
-            BufferedInputStream origin = null;
+            BufferedInputStream origin;
             FileOutputStream dest = new FileOutputStream(toLocation);
             ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
                     dest));
@@ -49,7 +49,7 @@ public class CompressUtil {
     private static void zipSubFolder(ZipOutputStream out, File folder, int basePathLength) throws IOException {
         final int BUFFER = 2048;
         File[] fileList = folder.listFiles();
-        BufferedInputStream origin = null;
+        BufferedInputStream origin;
         for (File file : fileList) {
             if (file.isDirectory()) {
                 zipSubFolder(out, file, basePathLength);

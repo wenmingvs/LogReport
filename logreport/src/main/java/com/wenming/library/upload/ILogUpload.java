@@ -23,11 +23,11 @@ package com.wenming.library.upload;
 import java.io.File;
 
 /**
- * 崩溃监听。
+ * 上传日志的接口
  */
 public interface ILogUpload {
 
-    public interface OnUploadFinishedListener {
+    interface OnUploadFinishedListener {
         void onSuceess();
 
 
@@ -38,8 +38,8 @@ public interface ILogUpload {
     /**
      * 发送日志文件。
      *
-     * @param file
+     * @param file 发送的文件
      */
-    public void sendFile(File file, String content, OnUploadFinishedListener onUploadFinishedListener);
+    void sendFile(File file, String content, OnUploadFinishedListener onUploadFinishedListener);
 
 }
