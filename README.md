@@ -94,6 +94,93 @@ LogReport.getInstance().upload(context);
 登录密码：apptest123   
 客户端授权码：apptest1234   
 
+## GitHub自动提交issue的配置
+请保证崩溃日志的邮件能到达您设定的Gmail邮箱中。如下图所示，才继续下去
+![enter image description here](http://ww2.sinaimg.cn/mw690/691cc151gw1f5zg1m39koj212f06ydh9.jpg)
 
+通过发送邮件来创建issue，在没有GitHub API的支持下，是不可能实现的。但是我们可以通过一些已经得到GitHub授权的第三方应用来实现。通过设置邮件监听，一旦邮箱收到了包含特定关键字的邮件，就会读取邮件的内容和标题，自动帮你提交issue。我们需要做的，就是把邮箱和GitHub的开源项目绑定起来，设置触发器即可，每次新邮件到达的时候，会检查此邮件是否满足触发器要求，如果满足，就会帮你自动提交issue。
 
+[快速教程](https://zapier.com/zapbook/zaps/10314/create-github-issues-from-new-emails-on-gmail/)
 
+1. 首先去注册一个帐号，如下图所示 [链接](https://zapier.com/app/min/10314/start)   
+![enter image description here](http://ww1.sinaimg.cn/mw690/691cc151gw1f605xtdfudj20fg0gmab5.jpg)
+2. 绑定Gmail邮箱，设置监听的邮件的类型，我们选择unread，即监听所有未读邮件（后面可以再根据个人要求修改）
+![enter image description here](http://ww1.sinaimg.cn/mw690/691cc151gw1f6085s90r3j20hi0nwwge.jpg)
+3. 绑定GitHub
+4. 设置创建issue的样式，在3个输入框中指定以下内容
+指定在哪个项目下创建issue
+issue的标题与邮件的标题相同
+issue的内容和邮件的内容相同
+![enter image description here](http://ww4.sinaimg.cn/mw690/691cc151gw1f6085rjwcnj20hi0jrmy6.jpg)
+5. 设定成功！！   
+![enter image description here](http://ww3.sinaimg.cn/mw690/691cc151gw1f6085qy072j20gl0cv0tb.jpg)
+6.  进入个人面板管理[链接](https://zapier.com/app/dashboard)，面板管理的Home标题下的每一个框框，都代表一个触发器，其中每个触发器都绑定了一个GitHub的开源项目   
+![enter image description here](http://ww3.sinaimg.cn/mw1024/691cc151gw1f608iv7j2zj20kl04pwen.jpg)
+
+后面我们还需要调整一下触发器，点击触发器的Edit，进入下面界面，做如下设置
+
+1. 设定监听的邮件类型为New Email Matching Search
+![enter image description here](http://ww1.sinaimg.cn/mw1024/691cc151gw1f609h9ptsnj21280hmdj6.jpg)
+2. 设定按照邮件的标题，对邮件做进一步筛选。设定的subject:LogReport，意思是对标题包含有LogReport关键字的邮件做捕获。通过设定不同的关键字，我们就可以给不同的GitHub上的开源项目提交issue了
+![enter image description here](http://ww3.sinaimg.cn/mw690/691cc151gw1f609mtbm4cj21290d6go6.jpg)
+3. 对触发的动作做指示。我们需要自动提交issue，所以应该按照以下来设定，不再赘述了，看图：
+![enter image description here](http://ww4.sinaimg.cn/mw690/691cc151gw1f609uz3aswj21220jpq6c.jpg)
+![enter image description here](http://ww2.sinaimg.cn/mw690/691cc151gw1f609uy5bjbj211v0jk0w6.jpg)
+
+8. 最后，我们返回到个人面板，如果触发器如下图所示是On状态，说明已经启动了！至此，自动提交崩溃issue的配置就完成了  
+![enter image description here](http://ww3.sinaimg.cn/mw690/691cc151gw1f60cy7ndtfj20ku04eweo.jpg)
+
+最后附上我的测试帐号，大家可以根据我的触发器的配置作为参考~
+帐号：wenmingvs@163.com
+密码：apptest1234
+
+Gradle 构建
+------
+- 版本
+	- 最新 Android SDK
+	- 最新 Gradle
+- 环境变量
+	- ANDROID_HOME
+	- GRADLE_HOME，同时把bin放入path变量
+	- Android SDK 安装，都更新到最新
+	- Android SDK Build-tools更新到最新
+	- Google Repository更新到最新
+	- Android Support Repository更新到最新
+	- Android Support Library更新到最新
+
+相信未来
+-----
+当蜘蛛网无情地查封了我的炉台   
+当灰烬的余烟叹息着贫困的悲哀   
+我依然固执地铺平失望的灰烬   
+用美丽的雪花写下：相信未来   
+
+当我的紫葡萄化为深秋的露水   
+当我的鲜花依偎在别人的情怀   
+我依然固执地用凝霜的枯藤   
+在凄凉的大地上写下：相信未来   
+
+我要用手指那涌向天边的排浪  
+我要用手掌那托住太阳的大海  
+摇曳着曙光那枝温暖漂亮的笔杆   
+用孩子的笔体写下：相信未来   
+
+我之所以坚定地相信未来  
+是我相信未来人们的眼睛  
+她有拨开历史风尘的睫毛  
+她有看透岁月篇章的瞳孔  
+
+不管人们对于我们腐烂的皮肉  
+那些迷途的惆怅、失败的苦痛  
+是寄予感动的热泪、深切的同情   
+还是给以轻蔑的微笑、辛辣的嘲讽   
+
+我坚信人们对于我们的脊骨  
+那无数次的探索、迷途、失败和成功   
+一定会给予热情、客观、公正的评定   
+是的，我焦急地等待着他们的评定  
+
+朋友，坚定地相信未来吧  
+相信不屈不挠的努力  
+相信战胜死亡的年轻  
+相信未来、热爱生命  
