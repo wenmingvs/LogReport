@@ -102,22 +102,22 @@ LogReport.getInstance().upload(context);
 
 [快速教程](https://zapier.com/zapbook/zaps/10314/create-github-issues-from-new-emails-on-gmail/)
 
-1. 首先去注册一个帐号，如下图所示 [链接](https://zapier.com/app/min/10314/start)
+1. 首先去注册一个帐号，如下图所示 [链接](https://zapier.com/app/min/10314/start)   
 ![enter image description here](http://ww1.sinaimg.cn/mw690/691cc151gw1f605xtdfudj20fg0gmab5.jpg)
 2. 绑定Gmail邮箱，设置监听的邮件的类型，我们选择unread，即监听所有未读邮件（后面可以再根据个人要求修改）
 ![enter image description here](http://ww1.sinaimg.cn/mw690/691cc151gw1f6085s90r3j20hi0nwwge.jpg)
 3. 绑定GitHub
 4. 设置创建issue的样式，在3个输入框中指定以下内容
-- 指定在哪个项目下创建issue
-- issue的标题与邮件的标题相同
-- issue的内容和邮件的内容相同
+指定在哪个项目下创建issue
+issue的标题与邮件的标题相同
+issue的内容和邮件的内容相同
 ![enter image description here](http://ww4.sinaimg.cn/mw690/691cc151gw1f6085rjwcnj20hi0jrmy6.jpg)
-5. 设定成功！！
+5. 设定成功！！   
 ![enter image description here](http://ww3.sinaimg.cn/mw690/691cc151gw1f6085qy072j20gl0cv0tb.jpg)
-6.  进入个人面板管理[链接](https://zapier.com/app/dashboard)，面板管理的Home标题下的每一个框框，都代表一个触发器，其中每个触发器都绑定了一个GitHub的开源项目
+6.  进入个人面板管理[链接](https://zapier.com/app/dashboard)，面板管理的Home标题下的每一个框框，都代表一个触发器，其中每个触发器都绑定了一个GitHub的开源项目   
 ![enter image description here](http://ww3.sinaimg.cn/mw1024/691cc151gw1f608iv7j2zj20kl04pwen.jpg)
 
-我们需要做的，就是调整一下触发器，点击触发器的Edit，进入下面界面，做如下设置
+后面我们还需要调整一下触发器，点击触发器的Edit，进入下面界面，做如下设置
 
 1. 设定监听的邮件类型为New Email Matching Search
 ![enter image description here](http://ww1.sinaimg.cn/mw1024/691cc151gw1f609h9ptsnj21280hmdj6.jpg)
