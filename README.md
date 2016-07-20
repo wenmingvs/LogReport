@@ -107,7 +107,7 @@ LogReport.getInstance().upload(context);
 2. 绑定Gmail邮箱，设置监听的邮件的类型，我们选择unread，即监听所有未读邮件（后面可以再根据个人要求修改）
 ![enter image description here](http://ww1.sinaimg.cn/mw690/691cc151gw1f6085s90r3j20hi0nwwge.jpg)
 3. 绑定GitHub
-4. 设置创建issue的样式，在3个输入框中指定以下内容
+4. 设置创建issue的样式，在3个输入框中指定以下内容   
 指定在哪个项目下创建issue   
 issue的标题与邮件的标题相同   
 issue的内容和邮件的内容相同   
@@ -127,5 +127,5 @@ issue的内容和邮件的内容相同
 ![enter image description here](http://ww4.sinaimg.cn/mw690/691cc151gw1f609uz3aswj21220jpq6c.jpg)
 ![enter image description here](http://ww2.sinaimg.cn/mw690/691cc151gw1f609uy5bjbj211v0jk0w6.jpg)
 
-至此，自动提交崩溃issue的配置就完成了
+至此，自动提交崩溃issue的配置就完成了   
 
