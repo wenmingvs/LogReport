@@ -108,9 +108,9 @@ LogReport.getInstance().upload(context);
 ![enter image description here](http://ww1.sinaimg.cn/mw690/691cc151gw1f6085s90r3j20hi0nwwge.jpg)
 3. 绑定GitHub
 4. 设置创建issue的样式，在3个输入框中指定以下内容
-指定在哪个项目下创建issue
-issue的标题与邮件的标题相同
-issue的内容和邮件的内容相同
+指定在哪个项目下创建issue   
+issue的标题与邮件的标题相同   
+issue的内容和邮件的内容相同   
 ![enter image description here](http://ww4.sinaimg.cn/mw690/691cc151gw1f6085rjwcnj20hi0jrmy6.jpg)
 5. 设定成功！！   
 ![enter image description here](http://ww3.sinaimg.cn/mw690/691cc151gw1f6085qy072j20gl0cv0tb.jpg)
