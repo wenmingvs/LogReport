@@ -46,11 +46,11 @@ public class MyApplication extends Application {
         super.onCreate();
         initEmailReporter();
         LogReport.getInstance()
-                 .setCacheSize(30 * 1024 * 1024)//支持设置缓存大小，超出后清空
+                 .setCacheSize(30 * 1024 * 1024)//设置缓存大小为30M，超出后清空
                  .setLogDir(getApplicationContext(), "sdcard/" + this.getString(this.getApplicationInfo().labelRes) + "/")//定义路径为：sdcard/[app name]/
                  .setWifiOnly(true)//设置只在Wifi状态下上传，设置为false为Wifi和移动网络都上传
                  .setLogSaver(new CrashWriter(getApplicationContext()))//支持自定义保存崩溃信息的样式
-               //.setEncryption(new AESEncode()) //支持日志到AES加密或者DES加密，默认不开启
+                 //.setEncryption(new AESEncode()) //支持日志到AES加密或者DES加密，默认不开启
                  .init(getApplicationContext());
     }
 
@@ -145,9 +145,9 @@ issue的内容和邮件的内容相同
 8. 最后，我们返回到个人面板，如果触发器如下图所示是On状态，说明已经启动了！至此，自动提交崩溃issue的配置就完成了  
 ![enter image description here](http://ww3.sinaimg.cn/mw690/691cc151gw1f60cy7ndtfj20ku04eweo.jpg)
 
-最后附上我的测试帐号，大家可以根据我的触发器的配置作为参考~
-帐号：wenmingvs@163.com
-密码：apptest1234
+最后附上我的测试帐号，大家可以根据我的触发器的配置作为参考~   
+帐号：wenmingvs@163.com   
+密码：apptest1234   
 
 Gradle 构建
 ------
