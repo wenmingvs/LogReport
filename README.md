@@ -19,6 +19,22 @@
 |支持保存Log日志|在打印Log的同时，把Log写入到本地（保存的时候会附带线程名称，线程id，打印时间），还原用户操作路径，为修复崩溃提供更多细节信息|
 |GitHub自动提交issue|使用邮件发送的形式，把接受崩溃日志的邮箱和GitHub特定的开源项目绑定在一起即可，更多细节请看下面介绍|
 
+## 依赖添加
+在你的项目根目录下的build.gradle文件中加入依赖
+``` java
+allprojects {
+    repositories {
+        ...
+        maven { url "https://jitpack.io" }
+    }
+}
+```
+添加依赖
+``` java
+dependencies {
+    compile 'com.github.wenmingvs:LogReport:1.0'
+}
+```
 
 ## 初始化
 自定义Application文件，默认使用Email发送
@@ -147,6 +163,7 @@ Gradle 构建
 	- Google Repository更新到最新
 	- Android Support Repository更新到最新
 	- Android Support Library更新到最新
+
 
 相信未来
 -----
