@@ -44,14 +44,18 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        initEmailReporter();
+        initCrashReport();
+    }
+
+    private void initCrashReport() {
         LogReport.getInstance()
-                 .setCacheSize(30 * 1024 * 1024)//设置缓存大小为30M，超出后清空
-                 .setLogDir(getApplicationContext(), "sdcard/" + this.getString(this.getApplicationInfo().labelRes) + "/")//定义路径为：sdcard/[app name]/
-                 .setWifiOnly(true)//设置只在Wifi状态下上传，设置为false为Wifi和移动网络都上传
-                 .setLogSaver(new CrashWriter(getApplicationContext()))//支持自定义保存崩溃信息的样式
-                 //.setEncryption(new AESEncode()) //支持日志到AES加密或者DES加密，默认不开启
-                 .init(getApplicationContext());
+                .setCacheSize(30 * 1024 * 1024)//支持设置缓存大小，超出后清空
+                .setLogDir(getApplicationContext(), "sdcard/" + this.getString(this.getApplicationInfo().labelRes) + "/")//定义路径为：sdcard/[app name]/
+                .setWifiOnly(true)//设置只在Wifi状态下上传，设置为false为Wifi和移动网络都上传
+                .setLogSaver(new CrashWriter(getApplicationContext()))//支持自定义保存崩溃信息的样式
+                //.setEncryption(new AESEncode()) //支持日志到AES加密或者DES加密，默认不开启
+                .init(getApplicationContext());
+        initEmailReporter();
     }
 
     /**
@@ -61,13 +65,14 @@ public class MyApplication extends Application {
         EmailReporter email = new EmailReporter(this);
         email.setReceiver("wenmingvs@gmail.com");//收件人
         email.setSender("wenmingvs@163.com");//发送人邮箱
-        email.setSendPassword("apptest1234");//用于登录第三方的邮件授权码
+        email.setSendPassword("apptest1234");//邮箱密码
         email.setSMTPHost("smtp.163.com");//SMTP地址
         email.setPort("465");//SMTP 端口
         LogReport.getInstance().setUploadType(email);
-    } 
+    }
 }
-```
+
+``` 
 如果您有自己的服务器，想往服务器发送本地保存的日志文件，而不是通过邮箱发送。请使用以下方法替换initEmailReporter方法
 ``` java
 
