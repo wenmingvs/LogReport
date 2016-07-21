@@ -32,7 +32,7 @@ allprojects {
 添加依赖
 ``` java
 dependencies {
-    compile 'com.github.wenmingvs:LogReport:1.0'
+    compile 'com.github.wenmingvs:LogReport:1.0.1'
 }
 ```
 
