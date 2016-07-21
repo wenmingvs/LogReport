@@ -1,7 +1,6 @@
 package com.wenming.crashcachedemo;
 
 import android.app.Application;
-import android.os.Environment;
 
 import com.wenming.library.LogReport;
 import com.wenming.library.save.imp.CrashWriter;
@@ -19,7 +18,7 @@ public class MyApplication extends Application {
         initEmailReporter();
         LogReport.getInstance()
                 .setCacheSize(30 * 1024 * 1024)//支持设置缓存大小，超出后清空
-                .setLogDir(getApplicationContext(), Environment.getExternalStorageDirectory().getPath() + "/LogReport/")//支持自定义日志保存路径
+                .setLogDir(getApplicationContext(), "sdcard/" + this.getString(this.getApplicationInfo().labelRes) + "/")//定义路径为：sdcard/[app name]/
                 .setWifiOnly(true)//支持
                 .setLogSaver(new CrashWriter(getApplicationContext()))//支持自定义保存崩溃信息的样式
                 //.setEncryption(new AESEncode()) //支持日志到AES加密或者DES加密，默认不开启
