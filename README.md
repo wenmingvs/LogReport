@@ -1,7 +1,7 @@
 # 崩溃日志上传框架
-当App崩溃的时，把崩溃信息和保存到本地的同时，自动通过邮件或者HTTP发送出去。
+当App崩溃的时，把崩溃信息和保存到本地的同时，自动通过邮件或者HTTP发送出去。你只需要几句，就能完成所有配置
 
-使用邮件形式发送崩溃信息，配合第三方工具使用，可以自动提交崩溃信息到GitHub issue中，方便开发者利用GitHub的issue系统来对开源项目的Bug进行进行追踪管理，更多细节请见下面介绍
+使用邮件形式发送崩溃信息，配合第三方工具使用，可以自动提交崩溃信息到GitHub issue中，方便开发者利用GitHub的issue系统来对开源项目的Bug进行进行追踪管理，更多细节请见下面介绍   
    
 ![enter image description here](http://ww1.sinaimg.cn/mw690/691cc151gw1f5zb0qor9nj208p092gm1.jpg)
    
@@ -37,7 +37,7 @@ dependencies {
 ```
 
 ## 初始化
-自定义Application文件，默认使用Email发送
+在自定义Application文件加入以下几行代码即可，默认使用email发送。如果您只需要在本地存储崩溃信息，不需要发送出去，请把initEmailReport（）删掉即可。
 ``` java
 public class MyApplication extends Application {
 
@@ -46,12 +46,12 @@ public class MyApplication extends Application {
         super.onCreate();
         initEmailReporter();
         LogReport.getInstance()
-                .setCacheSize(30 * 1024 * 1024)//支持设置缓存大小，超出后清空
-                .setLogDir(getApplicationContext(), Environment.getExternalStorageDirectory().getPath() + "/LogReport/")//支持自定义日志保存路径
-                .setWifiOnly(true)//支持
-                //.setEncryption(new AESEncode()) //支持日志到AES加密或者DES加密，默认不开启
-                .setLogSaver(new CrashWriter(getApplicationContext()))//支持自定义保存崩溃信息的样式
-                .init(getApplicationContext());
+                 .setCacheSize(30 * 1024 * 1024)//支持设置缓存大小，超出后清空
+                 .setLogDir(getApplicationContext(), "sdcard/" + this.getString(this.getApplicationInfo().labelRes) + "/")//定义路径为：sdcard/[app name]/
+                 .setWifiOnly(true)//设置只在Wifi状态下上传，设置为false为Wifi和移动网络都上传
+                 .setLogSaver(new CrashWriter(getApplicationContext()))//支持自定义保存崩溃信息的样式
+               //.setEncryption(new AESEncode()) //支持日志到AES加密或者DES加密，默认不开启
+                 .init(getApplicationContext());
     }
 
     /**
@@ -65,13 +65,12 @@ public class MyApplication extends Application {
         email.setSMTPHost("smtp.163.com");//SMTP地址
         email.setPort("465");//SMTP 端口
         LogReport.getInstance().setUploadType(email);
-    }    
+    } 
 }
 ```
-
-如果您有自己的服务器，想往服务器发送本地保存的日志文件，请使用以下方法替换initEmailReporter方法
-
+如果您有自己的服务器，想往服务器发送本地保存的日志文件，而不是通过邮箱发送。请使用以下方法替换initEmailReporter方法
 ``` java
+
     /**
      * 使用HTTP发送日志
      */
