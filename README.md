@@ -73,6 +73,15 @@ public class MyApplication extends Application {
 }
 
 ``` 
+
+## 上传
+在任意地方，调用以下方法即可，崩溃发生后，会在下一次App启动的时候使用Service异步打包日志，然后上传日志，发送成功与否，Service都会自动退出释放内存
+``` java
+LogReport.getInstance().upload(context);
+```
+
+## 发往服务器
+
 如果您有自己的服务器，想往服务器发送本地保存的日志文件，而不是通过邮箱发送。请使用以下方法替换initEmailReporter方法
 ``` java
 
@@ -96,11 +105,6 @@ public class MyApplication extends Application {
 LogWriter.writeLog("wenming", "打Log测试！！！！");
 ```
 
-## 上传
-在任意地方，调用以下方法即可，崩溃发生后，会在下一次App启动的时候使用Service异步打包日志，然后上传日志，发送成功与否，Service都会自动退出释放内存
-``` java
-LogReport.getInstance().upload(context);
-```
 
 ## 关于使用邮件上传的注意事项
 - 强烈建议使用163邮箱作为发送崩溃的邮箱，并且此邮箱务必要开启SMTP服务，如下图所示，才能发送邮件成功！

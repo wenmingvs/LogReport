@@ -26,14 +26,12 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.concurrent.Future;
 
 /**
  * 抽象的日志报告类
  */
 public abstract class BaseUpload implements ILogUpload {
     public Context mContext;
-    public Future mFuture;
 
     public final static SimpleDateFormat yyyy_MM_dd_HH_mm_ss_SS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SS", Locale.getDefault());
 
@@ -52,15 +50,7 @@ public abstract class BaseUpload implements ILogUpload {
 
     @Override
     public void sendFile(final File file, final String content, final OnUploadFinishedListener onUploadFinishedListener) {
-        if (mFuture != null && !mFuture.isDone()) {
-            mFuture.cancel(false);
-        }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                sendReport(buildTitle(mContext), buildBody(mContext, content), file, onUploadFinishedListener);
-            }
-        }).start();
+        sendReport(buildTitle(mContext), buildBody(mContext, content), file, onUploadFinishedListener);
     }
 
     /**

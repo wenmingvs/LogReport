@@ -77,9 +77,9 @@ public class HttpReporter extends BaseUpload {
         }
     }
 
-    private void deleteLog(File file) {
+    private boolean deleteLog(File file) {
         Log.d("HttpReporter", "delete: " + file.getName());
-        file.delete();
+        return file.delete();
     }
 
     public String getUrl() {
@@ -87,9 +87,7 @@ public class HttpReporter extends BaseUpload {
     }
 
     /**
-     * 发送请求的地址。
-     *
-     * @param url
+     * @param url 发送请求的地址。
      */
     public HttpReporter setUrl(String url) {
         this.url = url;
@@ -101,9 +99,7 @@ public class HttpReporter extends BaseUpload {
     }
 
     /**
-     * 标题的参数名
-     *
-     * @param titleParam
+     * @param titleParam 标题的参数名
      */
     public HttpReporter setTitleParam(String titleParam) {
         this.titleParam = titleParam;
@@ -115,9 +111,7 @@ public class HttpReporter extends BaseUpload {
     }
 
     /**
-     * 内容的参数名
-     *
-     * @param bodyParam
+     * @param bodyParam 内容的参数名
      */
     public HttpReporter setBodyParam(String bodyParam) {
         this.bodyParam = bodyParam;
@@ -129,9 +123,7 @@ public class HttpReporter extends BaseUpload {
     }
 
     /**
-     * 文件的参数名
-     *
-     * @param fileParam
+     * @param fileParam 文件的参数名
      */
     public HttpReporter setFileParam(String fileParam) {
         this.fileParam = fileParam;
@@ -143,9 +135,9 @@ public class HttpReporter extends BaseUpload {
     }
 
     /**
-     * 其他自定义的参数对（可不设置）。
+     * 。
      *
-     * @param otherParams
+     * @param otherParams 其他自定义的参数对（可不设置）
      */
     public void setOtherParams(Map<String, String> otherParams) {
         this.otherParams = otherParams;
@@ -156,9 +148,7 @@ public class HttpReporter extends BaseUpload {
     }
 
     /**
-     * 收件人
-     *
-     * @param to
+     * @param to 收件人
      */
     public HttpReporter setTo(String to) {
         this.to = to;
@@ -170,9 +160,7 @@ public class HttpReporter extends BaseUpload {
     }
 
     /**
-     * 设置发送请求之后的回调接口。
-     *
-     * @param callback
+     * @param callback 设置发送请求之后的回调接口。
      */
     public HttpReporter setCallback(HttpReportCallback callback) {
         this.callback = callback;
@@ -184,9 +172,7 @@ public class HttpReporter extends BaseUpload {
     }
 
     /**
-     * 收件人参数名。
-     *
-     * @param toParam
+     * @param toParam 收件人参数名。
      */
     public HttpReporter setToParam(String toParam) {
         this.toParam = toParam;
@@ -200,7 +186,7 @@ public class HttpReporter extends BaseUpload {
          *
          * @param status  状态码
          * @param content 返回的内容。
-         * @return
+         * @return 如果成功，则日志文件会被删除,返回true
          */
         public boolean isSuccess(int status, String content);
     }
