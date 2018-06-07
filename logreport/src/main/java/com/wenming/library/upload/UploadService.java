@@ -20,7 +20,7 @@ import java.util.Locale;
 public class UploadService extends IntentService {
 
     public static final String TAG = "UploadService";
-
+    boolean mCrashOnly;
     /**
      * 压缩包名称的一部分：时间戳
      */
@@ -39,6 +39,11 @@ public class UploadService extends IntentService {
         super.onCreate();
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        mCrashOnly = intent.getBooleanExtra("mCrashOnly",true);
+        return super.onStartCommand(intent, flags, startId);
+    }
     /**
      * 同一时间只会有一个耗时任务被执行，其他的请求还要在后面排队，
      * onHandleIntent()方法不会多线程并发执行，所有无需考虑同步问题
@@ -53,12 +58,15 @@ public class UploadService extends IntentService {
             LogUtil.d("Log文件夹都不存在，无需上传");
             return;
         }
-        //只存在log文件，但是不存在崩溃日志，也不会上传
         ArrayList<File> crashFileList = FileUtil.getCrashList(logfolder);
-        if (crashFileList.size() == 0) {
-            LogUtil.d(TAG, "只存在log文件，但是不存在崩溃日志，所以不上传");
-            return;
+        if(mCrashOnly){
+            //只存在log文件，但是不存在崩溃日志，也不会上传
+            if (crashFileList.size() == 0) {
+                LogUtil.d(TAG, "只存在log文件，但是不存在崩溃日志，所以不上传");
+                return;
+            }
         }
+
         File zipfolder = new File(LogReport.getInstance().getROOT() + "AlreadyUploadLog/");
         File zipfile = new File(zipfolder, "UploadOn" + ZIP_FOLDER_TIME_FORMAT.format(System.currentTimeMillis()) + ".zip");
         final File rootdir = new File(LogReport.getInstance().getROOT());

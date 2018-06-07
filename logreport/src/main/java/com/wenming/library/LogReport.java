@@ -49,6 +49,10 @@ public class LogReport {
      */
     private boolean mWifiOnly = true;
 
+    /**
+     * 设置是否在奔溃下才上传，true为只在奔溃模式下上传，false是都上传
+     */
+    private boolean mCrashOnly=true;
 
     private LogReport() {
     }
@@ -82,6 +86,11 @@ public class LogReport {
 
     public LogReport setWifiOnly(boolean wifiOnly) {
         mWifiOnly = wifiOnly;
+        return this;
+    }
+
+    public LogReport setCrashOnly(boolean crashOnly) {
+        mCrashOnly = crashOnly;
         return this;
     }
 
@@ -149,6 +158,7 @@ public class LogReport {
             return;
         }
         Intent intent = new Intent(applicationContext, UploadService.class);
+        intent.putExtra("mCrashOnly", mCrashOnly);
         applicationContext.startService(intent);
     }
 
