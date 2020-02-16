@@ -1,9 +1,10 @@
 package com.wenming.crashcachedemo;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.wenming.library.LogReport;
 import com.wenming.library.save.imp.LogWriter;
